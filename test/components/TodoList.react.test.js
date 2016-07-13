@@ -15,6 +15,6 @@ describe('<TodoList />', function() {
       list, TodoListItem
     );
 
-    expect(renderedItem).not.toBeUndefined();
+    expect(renderedItem.props.item.text).toEqual('fake-text');
   });
 });

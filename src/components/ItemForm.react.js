@@ -26,7 +26,7 @@ var ItemForm = React.createClass({
       <div className='item-form'>
         <form ref='todoForm' onSubmit={this.onFormSubmit}>
           <div className='input-group'>
-            <label for='text'>Todo Text</label>
+            <label htmlFor='text'>Todo Text</label>
             <input
               type='text'
               id='text'
@@ -37,7 +37,7 @@ var ItemForm = React.createClass({
           </div>
 
           <div className='input-group'>
-            <label for='priority'>High Priority</label>
+            <label htmlFor='priority'>High Priority</label>
             <input
               type='checkbox'
               id='priority'
