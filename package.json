@@ -1,0 +1,43 @@
+{
+  "name": "react_sample_app",
+  "version": "1.0.0",
+  "description": "A sample React application",
+  "author": "James Christie <jchristie@8thlight.com>",
+  "repository": {
+    "type": "git",
+    "url": "TBD"
+  },
+  "scripts": {
+    "browserify": "browserify src/tictactoe.js | uglifyjs > public/js/tictactoe.js",
+    "build": "mkdir -p public/js && npm run browserify",
+    "ship": "NODE_ENV=production npm run build",
+    "test": "testem ci -l phantomjs",
+    "test-watch": "testem ",
+    "server": "npm run build && node server.js"
+  },
+  "dependencies": {
+    "axios": "^0.16.2",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.5.51",
+    "browserify": "^14.4.0",
+    "es6-promise": "^4.1.0",
+    "express": "^4.14.0",
+    "jasmine": "^2.4.1",
+    "jasmine-node": "^1.14.5",
+    "node-lessify": "^0.1.4",
+    "phantomjs-prebuilt": "^2.1.14 ",
+    "react-test-renderer": "^15.5.4",
+    "reactify": "^1.1.1",
+    "testem": "^1.16.2",
+    "uglify-js": "^3.0.15"
+  },
+  "browserify": {
+    "transform": [
+      "reactify",
+      "node-lessify"
+    ]
+  }
+}

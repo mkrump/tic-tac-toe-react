@@ -1,6 +1,6 @@
-# React TicTacToe
+# React Tic-tac-toe
 
-This repository is a React version of TicTacToe.
+This repository is a React version of Tic-tac-toe. The repos [https://github.com/mkrump/tic-tac-toe-api](https://github.com/mkrump/tic-tac-toe-api) (currently hosted at [https://tic-tac-toe-clojure.herokuapp.com/](https://tic-tac-toe-clojure.herokuapp.com/)) and [https://github.com/mkrump/tic-tac-toe-clojure](https://github.com/mkrump/tic-tac-toe-clojure) provide the game related logic.
 
 ### Requirements
 

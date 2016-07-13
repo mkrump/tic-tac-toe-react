@@ -34,5 +34,8 @@ node_modules
 # Built files
 public/js/*
 
-#IDE files
-.idea/
+# IDE files
+.idea
+
+# testem file
+testem.tmp.js
