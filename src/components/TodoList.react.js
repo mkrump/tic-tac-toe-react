@@ -3,9 +3,7 @@ var React = require('react');
 var TodoListItem = require('./TodoListItem.react');
 
 var TodoList = React.createClass({
-  renderTodoItem: function(item) {
-    var index = this.props.items.indexOf(item);
-
+  renderTodoItem: function(item, index) {
     return (
       <TodoListItem key={index} item={item} />
     );
