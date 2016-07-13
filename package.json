@@ -1,0 +1,39 @@
+{
+  "name": "react_sample_app",
+  "version": "1.0.0",
+  "description": "A sample React application",
+  "author": "James Christie <jchristie@8thlight.com>",
+  "repository": {
+    "type": "git",
+    "url": "TBD"
+  },
+  "scripts": {
+    "browserify": "browserify src/react_sample.js | uglifyjs > public/js/react_sample.js",
+    "build": "mkdir -p public/js && npm run browserify",
+    "ship": "NODE_ENV=production npm run build",
+    "test": "xvfb-run testem ci",
+    "test-watch": "testem",
+    "server": "npm run build && node server.js"
+  },
+  "dependencies": {
+    "react": "~15.2.1",
+    "react-dom": "~15.2.1"
+  },
+  "devDependencies": {
+    "browserify": "~13.0.1",
+    "express": "~4.14.0",
+    "jasmine": "~2.4.1",
+    "jasmine-node": "~1.14.5",
+    "node-lessify": "~0.1.4",
+    "react-addons-test-utils": "~15.2.1",
+    "reactify": "~1.1.1",
+    "testem": "~1.10.0-0",
+    "uglify-js": "~2.7.0"
+  },
+  "browserify": {
+    "transform": [
+      "reactify",
+      "node-lessify"
+    ]
+  }
+}
