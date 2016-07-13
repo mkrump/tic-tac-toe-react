@@ -11,7 +11,7 @@
     "browserify": "browserify src/react_sample.js | uglifyjs > public/js/react_sample.js",
     "build": "mkdir -p public/js && npm run browserify",
     "ship": "NODE_ENV=production npm run build",
-    "test": "xvfb-run testem ci",
+    "test": "testem ci -l phantomjs",
     "test-watch": "testem",
     "server": "npm run build && node server.js"
   },
@@ -28,7 +28,8 @@
     "react-addons-test-utils": "~15.2.1",
     "reactify": "~1.1.1",
     "testem": "~1.10.0-0",
-    "uglify-js": "~2.7.0"
+    "uglify-js": "~2.7.0",
+    "phantomjs": "~2.1.7"
   },
   "browserify": {
     "transform": [
