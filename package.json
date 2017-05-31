@@ -8,7 +8,7 @@
     "url": "TBD"
   },
   "scripts": {
-    "browserify": "browserify src/react_sample.js | uglifyjs > public/js/react_sample.js",
+    "browserify": "browserify src/tictactoe.js | uglifyjs > public/js/tictactoe.js",
     "build": "mkdir -p public/js && npm run browserify",
     "ship": "NODE_ENV=production npm run build",
     "test": "testem ci -l phantomjs",
@@ -16,8 +16,8 @@
     "server": "npm run build && node server.js"
   },
   "dependencies": {
-    "react": "~15.2.1",
-    "react-dom": "~15.2.1"
+    "react": "~15.4.2",
+    "react-dom": "~15.4.2"
   },
   "devDependencies": {
     "browserify": "~13.0.1",
