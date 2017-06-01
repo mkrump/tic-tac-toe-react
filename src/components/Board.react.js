@@ -3,33 +3,40 @@ var Square = require('./Square.react');
 
 var Board = React.createClass({
 
-    renderSquare: function(i) {
+    squareContents: function (contents) {
+        return contents === 0 ? null : contents;
+    },
+
+    renderSquare: function (i) {
         return (<Square
                 key={i}
-                value={(this.props.squares[i]) === 0 ? null : this.props.squares[i]}
+                value={this.squareContents(this.props.squares[i])}
                 onClick={this.props.onClick.bind(null, i)}
             />
         );
     },
 
-    render: function(gridSize) {
+    renderBoardRow: function (row) {
+        var gridsize = this.props.gridSize;
+        var squares = [];
+        for (var col = 0; col < gridsize; col++) {
+            squares.push(this.renderSquare(row * gridsize + col));
+        }
+        return (
+            <div className="board-row">
+                {squares}
+            </div>
+        )
+    },
+
+    render: function () {
+        var board = [];
+        for (var row = 0; row < this.props.gridSize; row++) {
+            board.push(this.renderBoardRow(row));
+        }
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+                {board}
             </div>
         );
     }
