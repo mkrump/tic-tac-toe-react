@@ -12,7 +12,7 @@
     "build": "mkdir -p public/js && npm run browserify",
     "ship": "NODE_ENV=production npm run build",
     "test": "testem ci -l phantomjs",
-    "test-watch": "testem",
+    "test-watch": "testem ",
     "server": "npm run build && node server.js"
   },
   "dependencies": {
