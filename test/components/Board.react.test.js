@@ -3,8 +3,19 @@ var TestUtils = require('react-addons-test-utils');
 var shallowTestUtils = require('react-shallow-testutils');
 
 var Board = require('../../src/components/Board.react');
+var squareContents = require('../../src/components/Board.react');
 var Square = require('../../src/components/Square.react');
 
+
+describe('squareContents converts int to text for rendering', function () {
+    it('returns null if zero', function () {
+        expect(Board.squareContents(0)).toBeNull();
+    });
+
+    it('returns value if non-zero', function () {
+        expect(Board.squareContents(1)).toEqual("1");
+    })
+});
 
 describe('<Board />', function () {
     var squaresArray;
@@ -15,29 +26,31 @@ describe('<Board />', function () {
 
     beforeEach(function () {
         gridsize = 3;
-        squaresArray = [0, 0, "X",
-            0, 0, 0,
-            0, 0, 0];
-        handleClick = function () {};
+        squaresArray =
+            [0, 0, "X",
+             0, 0, 0,
+             0, 0, 0];
+        handleClick = function () {
+        };
         board = TestUtils.renderIntoDocument(
             <Board gridSize={3} squares={squaresArray} onClick={handleClick}/>
         );
 
     });
 
-    it('Board squares equal to zero create ' +
-        'Squares with a value of null', function () {
+    it('creates Squares with a value of null when ' +
+        'corresponding squaresArray entry is zero', function () {
         var square = board.renderSquare(1);
         expect(square.props.value).toBeNull();
     });
 
-    it('Board squares not equal to zero create Squares ' +
-        'with a value equal to their value', function () {
+    it('creates Squares with a value equal to squaresArray index when ' +
+        'corresponding squaresArray entry is non-zero', function () {
         var square = board.renderSquare(2);
         expect(square.props.value).toEqual("X");
     });
 
-    it('It renders a 3x3 Board with 9 squares', function () {
+    it('renders a 3x3 Board with 3 rows and 9 squares', function () {
         var handleClick = function () {
         };
         renderer = TestUtils.createRenderer();

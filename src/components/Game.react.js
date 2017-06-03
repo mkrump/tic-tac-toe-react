@@ -1,24 +1,29 @@
 var React = require('react');
 var Board = require('./Board.react');
 
+var init = function () {
+    return {
+        squares: Array(9).fill(0),
+        gridSize: 3,
+        xIsNext: true,
+    };
+};
+
+var handleClick = function (state, setState) {
+    return function (i) {
+        const squares = state.squares.slice();
+
+        squares[i] = state.xIsNext ? 'X' : 'O';
+        return setState({
+            squares: squares,
+            xIsNext: !state.xIsNext,
+        });
+    }
+};
+
 var Game = React.createClass({
     getInitialState: function () {
-        return {
-            squares: Array(9).fill(0),
-            gridSize: 3,
-            stepNumber: 0,
-            xIsNext: true,
-        };
-    },
-
-    handleClick: function (i) {
-        const squares = this.state.squares.slice();
-
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
-        this.setState({
-            squares: squares,
-            xIsNext: !this.state.xIsNext,
-        });
+        return init()
     },
 
     render: function () {
@@ -31,7 +36,7 @@ var Game = React.createClass({
                     <Board
                         gridSize={this.state.gridSize}
                         squares={squares}
-                        onClick={this.handleClick}
+                        onClick={handleClick(this.state, this.setState.bind(this))}
                     />
                 </div>
                 <div className="game-info">
@@ -43,5 +48,6 @@ var Game = React.createClass({
 });
 
 
-
 module.exports = Game;
+module.exports.init = init;
+module.exports.handleClick = handleClick;
