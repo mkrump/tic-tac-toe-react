@@ -1,10 +1,11 @@
 var React = require('react');
 var Board = require('./Board.react');
+var Reset = require('./Reset.react');
 
 var init = function () {
     return {
         // squares: Array(9).fill(0),
-        squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf,0),
+        squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf, 0),
         gridSize: 3,
         xIsNext: true,
     };
@@ -19,6 +20,13 @@ var handleClick = function (state, setState) {
             squares: squares,
             xIsNext: !state.xIsNext,
         });
+    }
+};
+
+var resetOnClick = function (setState) {
+    var initialState = init();
+    return function () {
+        return setState(initialState);
     }
 };
 
@@ -42,6 +50,11 @@ var Game = React.createClass({
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
+                    <div><Reset
+                        value={"Reset"}
+                        onClick={resetOnClick(this.setState.bind(this))}
+                    />
+                    </div>
                 </div>
             </div>
         );
@@ -52,3 +65,4 @@ var Game = React.createClass({
 module.exports = Game;
 module.exports.init = init;
 module.exports.handleClick = handleClick;
+module.exports.resetOnClick = resetOnClick;
