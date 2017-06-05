@@ -2,6 +2,6 @@
   "before_tests": "browserify test/**/*.js -o testem.tmp.js",
   "framework": "jasmine2",
   "src_files": [ "public/js/**/*.js" ],
-  "serve_files": [ "testem.tmp.js" ],
+  "serve_files": [ "testem.tmp.js"],
   "on_exit": "rm testem.tmp.js"
 }

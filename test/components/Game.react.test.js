@@ -7,7 +7,8 @@ var Game = require('../../src/components/Game.react');
 describe('init', function () {
     it('has keys: square, gridSize, stepNumber, xIsNext', function () {
         var expected = {
-            squares: Array(9).fill(0),
+            squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf,0),
+            // squares: Array(9).fill(0),
             gridSize: 3,
             xIsNext: true,
         };
@@ -30,8 +31,11 @@ describe('<Game />', function () {
 
     it('updates Game state when handleClick is called', function () {
         var state = Game.init();
-        var setState = function (nextState) {
-            return Object.assign({}, state, nextState);
+        // var setState = function (nextState) {
+        //     return Object.assign({}, state, nextState);
+        // };
+        var setState = function (state) {
+            return state;
         };
 
         var handler = Game.handleClick(state, setState);
