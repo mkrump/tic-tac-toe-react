@@ -4,7 +4,6 @@ var Reset = require('./Reset.react');
 
 var init = function () {
     return {
-        // squares: Array(9).fill(0),
         squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf, 0),
         gridSize: 3,
         xIsNext: true,

@@ -9,7 +9,6 @@ describe('init', function () {
     it('has keys: square, gridSize, stepNumber, xIsNext', function () {
         var expected = {
             squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf,0),
-            // squares: Array(9).fill(0),
             gridSize: 3,
             xIsNext: true,
         };
@@ -32,7 +31,7 @@ describe('<Game />', function () {
         expect(reset.length).toEqual(1);
     });
 
-    it('updates Game state when handleClick is called', function () {
+    it('updates Game state when handleClick when called', function () {
         var state = Game.init();
         var setState = function (state) {
             return state;
@@ -47,7 +46,7 @@ describe('<Game />', function () {
         expect(nextState.xIsNext).toEqual(false);
     });
 
-    it('resets Game state when is called', function () {
+    it('resets Game state when called', function () {
         var setState = function (state) {
             return state;
         };
