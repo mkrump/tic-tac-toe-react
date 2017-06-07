@@ -1,10 +1,10 @@
 var React = require('react');
-var TestUtils = require('react-addons-test-utils');
-var shallowTestUtils = require('react-shallow-testutils');
+var ReactTestUtils = require('react-dom/test-utils');
 
 var Board = require('../../src/components/Board.react');
 var squareContents = require('../../src/components/Board.react');
 var Square = require('../../src/components/Square.react');
+require('es6-promise').polyfill();
 
 
 describe('squareContents converts int to text for rendering', function () {
@@ -21,7 +21,7 @@ describe('<Board />', function () {
     var squaresArray;
     var handleClick;
     var gridsize;
-    var renderer;
+    var shallowRenderer;
     var board;
 
     beforeEach(function () {
@@ -32,7 +32,7 @@ describe('<Board />', function () {
              0, 0, 0];
         handleClick = function () {
         };
-        board = TestUtils.renderIntoDocument(
+        board = ReactTestUtils.renderIntoDocument(
             <Board gridSize={3} squares={squaresArray} onClick={handleClick}/>
         );
 
@@ -53,13 +53,11 @@ describe('<Board />', function () {
     it('renders a 3x3 Board with 3 rows and 9 squares', function () {
         var handleClick = function () {
         };
-        renderer = TestUtils.createRenderer();
-        renderer.render(
+        var renderedBoard = ReactTestUtils.renderIntoDocument(
             <Board gridSize={3} squares={squaresArray} onClick={handleClick}/>
         );
-        var renderedBoard = renderer.getRenderOutput();
-        var squares = shallowTestUtils.findAllWithType(renderedBoard, Square);
-        var rows = TestUtils.scryRenderedDOMComponentsWithClass(board, 'board-row');
+        var squares = ReactTestUtils.scryRenderedComponentsWithType(renderedBoard, Square);
+        var rows = ReactTestUtils.scryRenderedDOMComponentsWithClass(board, 'board-row');
         expect(squares.length).toEqual(9);
         expect(rows.length).toEqual(3);
     });

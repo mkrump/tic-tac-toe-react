@@ -1,24 +1,44 @@
 var React = require('react');
 var Board = require('./Board.react');
 var Reset = require('./Reset.react');
+var axios = require('axios');
 
 var init = function () {
     return {
         squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf, 0),
         gridSize: 3,
-        xIsNext: true,
-    };
+        currentPlayer: 1,
+    }
 };
 
-var handleClick = function (state, setState) {
-    return function (i) {
-        const squares = state.squares.slice();
+var localHost = axios.create({
+    baseURL: 'http://localhost:3000',
+    timeout: 1000,
+});
 
-        squares[i] = state.xIsNext ? 'X' : 'O';
-        return setState({
-            squares: squares,
-            xIsNext: !state.xIsNext,
-        });
+
+var handleClick = function (i, state, setState) {
+    var squares = state.squares.slice();
+    squares[i] = (state.currentPlayer === 1) ? 1 : -1;
+    return setState({
+        squares: squares,
+        currentPlayer:  -1 * state.currentPlayer
+    });
+};
+
+var validateMove = function (state, setState) {
+    return function (move) {
+        localHost.post('/valid-move', {
+            move: move,
+            board: {'board-contents': state.squares, gridsize: state.gridSize}
+        }).then(function (response) {
+            handleClick(move, state, setState);
+        }).catch(function (error) {
+            if (error.response) {
+                console.log(error.response.data['error-response']);
+                console.log(error.response.status);
+            }
+        })
     }
 };
 
@@ -29,6 +49,14 @@ var resetOnClick = function (setState) {
     }
 };
 
+var UIMarkers = function (board) {
+    return board.map(function (square) {
+        if (square === 1) return "X";
+        else if (square === -1) return "O";
+        else return "";
+    });
+};
+
 var Game = React.createClass({
     getInitialState: function () {
         return init()
@@ -36,15 +64,15 @@ var Game = React.createClass({
 
     render: function () {
         var squares = this.state.squares;
-        var status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+        var status = 'Next player: ' + (this.state.currentPlayer ? 'X' : 'O');
 
         return (
             <div className="game">
                 <div className="game-board">
                     <Board
                         gridSize={this.state.gridSize}
-                        squares={squares}
-                        onClick={handleClick(this.state, this.setState.bind(this))}
+                        squares={UIMarkers(squares)}
+                        onClick={validateMove(this.state, this.setState.bind(this))}
                     />
                 </div>
                 <div className="game-info">
@@ -65,3 +93,5 @@ module.exports = Game;
 module.exports.init = init;
 module.exports.handleClick = handleClick;
 module.exports.resetOnClick = resetOnClick;
+module.exports.validateMove = validateMove;
+module.exports.UIMarkers = UIMarkers;

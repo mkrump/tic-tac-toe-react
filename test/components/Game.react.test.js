@@ -1,33 +1,39 @@
 var React = require('react');
-var TestUtils = require('react-addons-test-utils');
-var shallowTestUtils = require('react-shallow-testutils');
+var ReactTestUtils = require('react-dom/test-utils');
+
 var Board = require('../../src/components/Board.react');
 var Game = require('../../src/components/Game.react');
 var Reset = require('../../src/components/Reset.react');
 
 describe('init', function () {
-    it('has keys: square, gridSize, stepNumber, xIsNext', function () {
+    it('has keys: square, gridSize, stepNumber, currentPlayer', function () {
         var expected = {
             squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf,0),
             gridSize: 3,
-            xIsNext: true,
+            currentPlayer: 1,
         };
         var initObj = Game.init();
         expect(initObj).toEqual(expected);
     });
 });
 
+describe('UIMarkers', function () {
+    it('translates board squares to UI markers', function () {
+        var uiMarkers = Game.UIMarkers([0, 1, -1]);
+        var expected = ["", "X", "O"];
+        expect(uiMarkers).toEqual(expected);
+    });
+});
+
 describe('<Game />', function () {
     it('renders a Board', function () {
-        renderer = TestUtils.createRenderer();
-        renderer.render(
+        var renderedGame = ReactTestUtils.renderIntoDocument(
             <Game />
         );
 
-        var renderedGame = renderer.getRenderOutput();
-        var board = shallowTestUtils.findAllWithType(renderedGame, Board);
+        var board = ReactTestUtils.scryRenderedComponentsWithType(renderedGame, Board);
         expect(board.length).toEqual(1);
-        var reset = shallowTestUtils.findAllWithType(renderedGame, Reset);
+        var reset = ReactTestUtils.scryRenderedComponentsWithType(renderedGame, Reset);
         expect(reset.length).toEqual(1);
     });
 
@@ -37,13 +43,26 @@ describe('<Game />', function () {
             return state;
         };
 
-        var handler = Game.handleClick(state, setState);
-        var nextState = handler(1);
+        var nextState = Game.handleClick(1, state, setState);
 
         expect(state.squares[1]).toEqual(0);
-        expect(state.xIsNext).toEqual(true);
-        expect(nextState.squares[1]).toEqual("X");
-        expect(nextState.xIsNext).toEqual(false);
+        expect(state.currentPlayer).toEqual(1);
+        expect(nextState.squares[1]).toEqual(1);
+        expect(nextState.currentPlayer).toEqual(-1);
+    });
+    it('validates move when called', function () {
+        var state = Game.init();
+        var setState = function (state) {
+            return state;
+        };
+
+        var validator = Game.validateMove(state, setState);
+        var nextState = validator(1);
+
+        expect(state.squares[1]).toEqual(0);
+        expect(state.currentPlayer).toEqual(1);
+        expect(nextState.squares[1]).toEqual(1);
+        expect(nextState.currentPlayer).toEqual(-1);
     });
 
     it('resets Game state when called', function () {
@@ -56,7 +75,7 @@ describe('<Game />', function () {
         expect(initialState).toEqual(updatedState);
 
         // Changed state should not equal initial state
-        updatedState.squares[0] = 'X';
+        updatedState.squares[0] = 1;
         expect(initialState).not.toEqual(updatedState);
 
         var handler = Game.resetOnClick(setState);

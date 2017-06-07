@@ -24,7 +24,7 @@ var Board = React.createClass({
             squares.push(this.renderSquare(row * gridSize + col));
         }
         return (
-            <div className="board-row">
+            <div className="board-row" key={row}>
                 {squares}
             </div>
         )
