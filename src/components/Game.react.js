@@ -31,13 +31,13 @@ var validateMoveAPI = function (move, state) {
     });
 };
 
-var squareClickHandler = function (state, setState, validation, action) {
+var squareClickHandler = function (state, setState) {
     return function (move) {
-        validation(move, state)
-            .then(function(success){
+        validateMoveAPI(move, state)
+            .then(function (success) {
                 console.log('validateMoveAPI WAS CALLED!');
                 console.log('Response:' + JSON.stringify(success.data));
-                action(move, state, setState)
+                updateBoard(move, state, setState)
             })
             .catch(function (error) {
                 if (error.response) {
@@ -70,7 +70,7 @@ var Game = React.createClass({
 
     render: function () {
         var squares = this.state.squares;
-        var status = 'Next player: ' + (this.state.currentPlayer ? 'X' : 'O');
+        var status = 'Next player: ' + ((this.state.currentPlayer) === 1 ? 'X' : 'O');
 
         return (
             <div className="game">
@@ -78,7 +78,7 @@ var Game = React.createClass({
                     <Board
                         gridSize={this.state.gridSize}
                         squares={UIMarkers(squares)}
-                        onClick={squareClickHandler(this.state, this.setState.bind(this), validateMoveAPI, updateBoard)}
+                        onClick={squareClickHandler(this.state, this.setState.bind(this))}
                     />
                 </div>
                 <div className="game-info">

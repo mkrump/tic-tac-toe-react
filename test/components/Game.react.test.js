@@ -75,6 +75,7 @@ describe('<Game />', function () {
 });
 
 describe('API calls', function () {
+    var apiSuccess;
     beforeEach(function (done) {
         apiSuccess = Promise.resolve("Got it");
         done();
@@ -86,7 +87,8 @@ describe('API calls', function () {
             return state;
         };
 
-        var validator = Game.squareClickHandler(state, setState, Game.validateMoveAPI, Game.updateBoard);
+        // var validator = Game.squareClickHandler(state, setState, Game.validateMoveAPI, Game.updateBoard);
+        var validator = Game.squareClickHandler(state, setState);
         spyOn(Game, 'validateMoveAPI').and.returnValue(apiSuccess);
         spyOn(Game, 'updateBoard');
         validator(1);
