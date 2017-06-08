@@ -11,7 +11,7 @@ var init = function () {
     }
 };
 
-var handleClick = function (i, state, setState) {
+var updateBoard = function (i, state, setState) {
     var squares = state.squares.slice();
     squares[i] = (state.currentPlayer === 1) ? 1 : -1;
     return setState({
@@ -31,11 +31,13 @@ var validateMoveAPI = function (move, state) {
     });
 };
 
-var validateMove = function (state, setState) {
+var squareClickHandler = function (state, setState, validation, action) {
     return function (move) {
-        validateMoveAPI(move, state)
-            .then(function () {
-                handleClick(move, state, setState);
+        validation(move, state)
+            .then(function(success){
+                console.log('validateMoveAPI WAS CALLED!');
+                console.log('Response:' + JSON.stringify(success.data));
+                action(move, state, setState)
             })
             .catch(function (error) {
                 if (error.response) {
@@ -45,22 +47,6 @@ var validateMove = function (state, setState) {
             })
     }
 };
-
-// var validateMove = function (state, setState) {
-//     return function (move) {
-//         localHost.post('/valid-move', {
-//             move: move,
-//             board: {'board-contents': state.squares, gridsize: state.gridSize}
-//         }).then(function () {
-//             handleClick(move, state, setState);
-//         }).catch(function (error) {
-//             if (error.response) {
-//                 console.log(error.response.data['error-response']);
-//                 console.log(error.response.status);
-//             }
-//        })
-//     }
-// };
 
 var resetOnClick = function (setState) {
     var initialState = init();
@@ -92,7 +78,7 @@ var Game = React.createClass({
                     <Board
                         gridSize={this.state.gridSize}
                         squares={UIMarkers(squares)}
-                        onClick={validateMove(this.state, this.setState.bind(this))}
+                        onClick={squareClickHandler(this.state, this.setState.bind(this), validateMoveAPI, updateBoard)}
                     />
                 </div>
                 <div className="game-info">
@@ -111,8 +97,8 @@ var Game = React.createClass({
 
 module.exports = Game;
 module.exports.init = init;
-module.exports.handleClick = handleClick;
+module.exports.updateBoard = updateBoard;
 module.exports.resetOnClick = resetOnClick;
-module.exports.validateMove = validateMove;
+module.exports.squareClickHandler = squareClickHandler;
 module.exports.validateMoveAPI = validateMoveAPI;
 module.exports.UIMarkers = UIMarkers;

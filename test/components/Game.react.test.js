@@ -8,7 +8,7 @@ var Reset = require('../../src/components/Reset.react');
 describe('init', function () {
     it('has keys: square, gridSize, stepNumber, currentPlayer', function () {
         var expected = {
-            squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf,0),
+            squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf, 0),
             gridSize: 3,
             currentPlayer: 1,
         };
@@ -26,6 +26,8 @@ describe('UIMarkers', function () {
 });
 
 describe('<Game />', function () {
+
+
     it('renders a Board', function () {
         var renderedGame = ReactTestUtils.renderIntoDocument(
             <Game />
@@ -37,13 +39,13 @@ describe('<Game />', function () {
         expect(reset.length).toEqual(1);
     });
 
-    it('updates Game state when handleClick when called', function () {
+    it('updates Game state when updateBoard when called', function () {
         var state = Game.init();
         var setState = function (state) {
             return state;
         };
 
-        var nextState = Game.handleClick(1, state, setState);
+        var nextState = Game.updateBoard(1, state, setState);
 
         expect(state.squares[1]).toEqual(0);
         expect(state.currentPlayer).toEqual(1);
@@ -51,26 +53,11 @@ describe('<Game />', function () {
         expect(nextState.currentPlayer).toEqual(-1);
     });
 
-    it('validates move when called', function () {
-        var state = Game.init();
-        var setState = function (state) {
-            return state;
-        };
-
-        var validator = Game.validateMove(state, setState);
-        var validateMoveAPISpy = spyOn(Game, 'validateMoveAPI').and.returnValue(Promise.resolve("Got it"));
-        var handleClickSpy = spyOn(Game, 'handleClick');
-        validator(1);
-        expect(validateMoveAPISpy).toHaveBeenCalled();
-        expect(handleClickSpy).toHaveBeenCalled();
-
-    });
 
     it('resets Game state when called', function () {
         var setState = function (state) {
             return state;
         };
-
         var initialState = Game.init();
         var updatedState = JSON.parse(JSON.stringify(initialState));
         expect(initialState).toEqual(updatedState);
@@ -84,5 +71,27 @@ describe('<Game />', function () {
 
         expect(resetState).toEqual(initialState);
 
+    });
+});
+
+describe('API calls', function () {
+    beforeEach(function (done) {
+        apiSuccess = Promise.resolve("Got it");
+        done();
+    });
+
+    it('validates move when called', function (done) {
+        var state = Game.init();
+        var setState = function (state) {
+            return state;
+        };
+
+        var validator = Game.squareClickHandler(state, setState, Game.validateMoveAPI, Game.updateBoard);
+        spyOn(Game, 'validateMoveAPI').and.returnValue(apiSuccess);
+        spyOn(Game, 'updateBoard');
+        validator(1);
+        expect(Game.validateMoveAPI).toHaveBeenCalled();
+        expect(Game.updateBoard).toHaveBeenCalled();
+        done();
     });
 });
