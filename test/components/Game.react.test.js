@@ -50,6 +50,7 @@ describe('<Game />', function () {
         expect(nextState.squares[1]).toEqual(1);
         expect(nextState.currentPlayer).toEqual(-1);
     });
+
     it('validates move when called', function () {
         var state = Game.init();
         var setState = function (state) {
@@ -57,12 +58,12 @@ describe('<Game />', function () {
         };
 
         var validator = Game.validateMove(state, setState);
-        var nextState = validator(1);
+        var validateMoveAPISpy = spyOn(Game, 'validateMoveAPI').and.returnValue(Promise.resolve("Got it"));
+        var handleClickSpy = spyOn(Game, 'handleClick');
+        validator(1);
+        expect(validateMoveAPISpy).toHaveBeenCalled();
+        expect(handleClickSpy).toHaveBeenCalled();
 
-        expect(state.squares[1]).toEqual(0);
-        expect(state.currentPlayer).toEqual(1);
-        expect(nextState.squares[1]).toEqual(1);
-        expect(nextState.currentPlayer).toEqual(-1);
     });
 
     it('resets Game state when called', function () {

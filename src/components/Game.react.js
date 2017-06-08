@@ -11,36 +11,56 @@ var init = function () {
     }
 };
 
-var localHost = axios.create({
-    baseURL: 'http://localhost:3000',
-    timeout: 1000,
-});
-
-
 var handleClick = function (i, state, setState) {
     var squares = state.squares.slice();
     squares[i] = (state.currentPlayer === 1) ? 1 : -1;
     return setState({
         squares: squares,
-        currentPlayer:  -1 * state.currentPlayer
+        currentPlayer: -1 * state.currentPlayer
+    });
+};
+
+var validateMoveAPI = function (move, state) {
+    var localHost = axios.create({
+        baseURL: 'http://localhost:3000',
+        timeout: 1000,
+    });
+    return localHost.post('/valid-move', {
+        move: move,
+        board: {'board-contents': state.squares, gridsize: state.gridSize}
     });
 };
 
 var validateMove = function (state, setState) {
     return function (move) {
-        localHost.post('/valid-move', {
-            move: move,
-            board: {'board-contents': state.squares, gridsize: state.gridSize}
-        }).then(function (response) {
-            handleClick(move, state, setState);
-        }).catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data['error-response']);
-                console.log(error.response.status);
-            }
-        })
+        validateMoveAPI(move, state)
+            .then(function () {
+                handleClick(move, state, setState);
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    console.log(error.response.data['error-response']);
+                    console.log(error.response.status);
+                }
+            })
     }
 };
+
+// var validateMove = function (state, setState) {
+//     return function (move) {
+//         localHost.post('/valid-move', {
+//             move: move,
+//             board: {'board-contents': state.squares, gridsize: state.gridSize}
+//         }).then(function () {
+//             handleClick(move, state, setState);
+//         }).catch(function (error) {
+//             if (error.response) {
+//                 console.log(error.response.data['error-response']);
+//                 console.log(error.response.status);
+//             }
+//        })
+//     }
+// };
 
 var resetOnClick = function (setState) {
     var initialState = init();
@@ -94,4 +114,5 @@ module.exports.init = init;
 module.exports.handleClick = handleClick;
 module.exports.resetOnClick = resetOnClick;
 module.exports.validateMove = validateMove;
+module.exports.validateMoveAPI = validateMoveAPI;
 module.exports.UIMarkers = UIMarkers;
