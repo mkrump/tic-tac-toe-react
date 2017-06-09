@@ -7,7 +7,6 @@ describe('<Square />', function () {
     it('has a button square styling and a value', function () {
         var clickHandlerSpy = jasmine.createSpy();
         var square = ReactTestUtils.renderIntoDocument(
-
             <Square value={'text'} onClick={clickHandlerSpy}/>
         );
         var button = ReactTestUtils.findRenderedDOMComponentWithTag(

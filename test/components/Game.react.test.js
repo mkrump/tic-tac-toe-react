@@ -75,25 +75,41 @@ describe('<Game />', function () {
 });
 
 describe('API calls', function () {
-    var apiSuccess;
+    var mockValidator;
+    var validator;
+    var state;
+    var setState;
+
     beforeEach(function (done) {
-        apiSuccess = Promise.resolve("Got it");
+        state = Game.init();
+        setState = function (state) {
+            return state;
+        };
+        mockValidator = {
+            mockApiSuccess: function () {
+                console.log(arguments.callee.name + " Was Called");
+                return Promise.resolve();
+            },
+            mockApiReject: function () {
+                return Promise.reject();
+            },
+            mockUpdate: function () {
+                console.log(arguments.callee.name + " Was Called");
+            }
+        };
+        validator = Game.squareClickHandler(state, setState,
+            mockValidator.mockApiSuccess, mockValidator.mockUpdate);
         done();
     });
 
     it('validates move when called', function (done) {
-        var state = Game.init();
-        var setState = function (state) {
-            return state;
-        };
+        spyOn(mockValidator, 'mockApiSuccess');
+        spyOn(mockValidator, 'mockUpdate');
 
-        // var validator = Game.squareClickHandler(state, setState, Game.validateMoveAPI, Game.updateBoard);
-        var validator = Game.squareClickHandler(state, setState);
-        spyOn(Game, 'validateMoveAPI').and.returnValue(apiSuccess);
-        spyOn(Game, 'updateBoard');
         validator(1);
-        expect(Game.validateMoveAPI).toHaveBeenCalled();
-        expect(Game.updateBoard).toHaveBeenCalled();
+
+        expect(mockValidator.mockApiSuccess).toHaveBeenCalled();
+        expect(mockValidator.mockUpdate).toHaveBeenCalled();
         done();
     });
 });
