@@ -99,17 +99,20 @@ describe('API calls', function () {
         };
         validator = Game.squareClickHandler(state, setState,
             mockValidator.mockApiSuccess, mockValidator.mockUpdate);
+        console.log("Finished Setup");
+        spyOn(mockValidator, 'mockApiSuccess');
+        spyOn(mockValidator, 'mockUpdate');
+        validator(1);
         done();
     });
 
     it('validates move when called', function (done) {
-        spyOn(mockValidator, 'mockApiSuccess');
-        spyOn(mockValidator, 'mockUpdate');
-
-        validator(1);
-
+        console.log("Starting Tests");
+        console.log("Expecting Success");
         expect(mockValidator.mockApiSuccess).toHaveBeenCalled();
+        console.log("Expecting Update");
         expect(mockValidator.mockUpdate).toHaveBeenCalled();
+        console.log("Finished Test");
         done();
     });
 });
