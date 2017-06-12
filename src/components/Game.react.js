@@ -2,29 +2,8 @@ var React = require('react');
 var Board = require('./Board.react');
 var Reset = require('./Reset.react');
 var axios = require('axios');
-var Service = require('./Service');
 
-var validateMoveAPI = function (move, state) {
-    var localHost = axios.create({
-        baseURL: 'https://tic-tac-toe-clojure.herokuapp.com',
-        timeout: 1000,
-    });
-    return localHost.post('/valid-move', {
-        move: move,
-        board: {'board-contents': state.squares, gridsize: state.gridSize}
-    });
-};
-
-var computerMoveAPI = function (state) {
-    var localHost = axios.create({
-        baseURL: 'https://tic-tac-toe-clojure.herokuapp.com',
-        timeout: 1000,
-    });
-    return localHost.post('/computer-move', {
-        'current-player': state.currentPlayer,
-        board: {'board-contents': state.squares, gridsize: state.gridSize}
-    });
-};
+var Service = require('./Service.js');
 
 var init = function () {
     return {
@@ -33,6 +12,7 @@ var init = function () {
         currentPlayer: 1,
     }
 };
+
 
 var updateBoard = function (i, state, setState) {
     var squares = state.squares.slice();
@@ -45,9 +25,9 @@ var updateBoard = function (i, state, setState) {
 
 var squareClickHandler = function (state, setState, validation, action) {
     return function (move) {
-        validation(move, state)
+        validation(move, state.squares, state.gridSize)
             .then(function (success) {
-                // console.log('Response:' + JSON.stringify(success.data));
+                console.log('Response:' + JSON.stringify(success.data));
                 action(move, state, setState);
             })
             .catch(function (error) {
@@ -82,6 +62,7 @@ var Game = React.createClass({
     render: function () {
         var squares = this.state.squares;
         var status = 'Next player: ' + ((this.state.currentPlayer) === 1 ? 'X' : 'O');
+        var moveValidator = Service.validateMove;
 
         return (
             <div className="game">
@@ -89,7 +70,7 @@ var Game = React.createClass({
                     <Board
                         gridSize={this.state.gridSize}
                         squares={UIMarkers(squares)}
-                        onClick={squareClickHandler(this.state, this.setState.bind(this), validateMoveAPI, updateBoard)}
+                        onClick={squareClickHandler(this.state, this.setState.bind(this), moveValidator, updateBoard)}
                     />
                 </div>
                 <div className="game-info">
@@ -111,5 +92,4 @@ module.exports.init = init;
 module.exports.updateBoard = updateBoard;
 module.exports.resetOnClick = resetOnClick;
 module.exports.squareClickHandler = squareClickHandler;
-module.exports.validateMoveAPI = validateMoveAPI;
 module.exports.UIMarkers = UIMarkers;

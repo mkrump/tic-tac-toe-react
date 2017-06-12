@@ -18,7 +18,7 @@ validateMoveEndpoint.validateMove = function(move, boardArray, gridSize) {
             board: {'board-contents': boardArray, gridsize: gridSize}
         }
     });
-};
+}.bind(validateMoveEndpoint);
 
 validateMoveEndpoint.validateMove(1, [1, 0, 0, 0, 0, 0, 0, 0, 0], 3)
     .then(function (response) {
