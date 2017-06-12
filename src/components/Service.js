@@ -9,7 +9,7 @@ function Endpoint(url, timeout) {
 
 var validateMoveEndpoint = new Endpoint('https://tic-tac-toe-clojure.herokuapp.com', 5000);
 
-validateMoveEndpoint.validateMove = function (move, boardArray, gridSize) {
+validateMoveEndpoint.validateMove = function(move, boardArray, gridSize) {
     return this.httpRequest({
         method: 'post',
         url: '/valid-move',

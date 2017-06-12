@@ -2,6 +2,29 @@ var React = require('react');
 var Board = require('./Board.react');
 var Reset = require('./Reset.react');
 var axios = require('axios');
+var Service = require('./Service');
+
+var validateMoveAPI = function (move, state) {
+    var localHost = axios.create({
+        baseURL: 'https://tic-tac-toe-clojure.herokuapp.com',
+        timeout: 1000,
+    });
+    return localHost.post('/valid-move', {
+        move: move,
+        board: {'board-contents': state.squares, gridsize: state.gridSize}
+    });
+};
+
+var computerMoveAPI = function (state) {
+    var localHost = axios.create({
+        baseURL: 'https://tic-tac-toe-clojure.herokuapp.com',
+        timeout: 1000,
+    });
+    return localHost.post('/computer-move', {
+        'current-player': state.currentPlayer,
+        board: {'board-contents': state.squares, gridsize: state.gridSize}
+    });
+};
 
 var init = function () {
     return {
@@ -20,20 +43,9 @@ var updateBoard = function (i, state, setState) {
     });
 };
 
-var validateMoveAPI = function (move, state) {
-    var localHost = axios.create({
-        baseURL: 'http://localhost:3000',
-        timeout: 1000,
-    });
-    return localHost.post('/valid-move', {
-        move: move,
-        board: {'board-contents': state.squares, gridsize: state.gridSize}
-    });
-};
-
 var squareClickHandler = function (state, setState, validation, action) {
     return function (move) {
-            validation(move, state)
+        validation(move, state)
             .then(function (success) {
                 // console.log('Response:' + JSON.stringify(success.data));
                 action(move, state, setState);
