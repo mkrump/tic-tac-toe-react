@@ -41,14 +41,6 @@ validateMoveEndpoint.validateMove(1, [1, 0, 0, 0, 0, 0, 0, 0, 0], 3)
         console.log(response);
     });
 
-// computerMoveEndpoint.computerMove(1, [1, 0, 0, 0, 0, 0, 0, 0, 0], 3)
-//     .then(function (response) {
-//         console.log(response);
-//     })
-//     .catch(function (response) {
-//         console.log(response);
-//     });
-
 module.exports.validateMoveEndpoint = validateMoveEndpoint;
 module.exports.computerMoveEndpoint = computerMoveEndpoint;
 

@@ -20,7 +20,6 @@ var updateBoard = function (i, state, setState) {
     var squares = state.squares.slice();
     squares[i] = (state.currentPlayer === 1) ? 1 : -1;
     currentPlayer = state.currentPlayer;
-    console.log("Update Board");
     setState({
         squares: squares,
         currentPlayer: -1 * currentPlayer,
@@ -43,6 +42,7 @@ var squareClickHandler = function (state, setState, validate, update) {
     }
 };
 
+// TODO TEST
 var makeComputerMove = function (state, setState, computerMove, update) {
     computerMove(state.currentPlayer, state.squares, state.gridSize, setState)
         .then(function (success) {
@@ -80,7 +80,7 @@ var Game = React.createClass({
         var currentPlayer = this.state.currentPlayer;
         // TODO Need to understand binding better ...
         var setState = this.setState.bind(this);
-        if (currentPlayer === -1) {
+        if (currentPlayer === PLAYERS.COMPUTER) {
             makeComputerMove(this.state, setState, computerMove, updateBoard);
         }
     },
@@ -88,9 +88,9 @@ var Game = React.createClass({
     render: function () {
         var moveValidator = Service.validateMoveEndpoint.validateMove;
         var status = 'Next player: ' + PLAYER_MARKERS[this.state.currentPlayer];
-        var humanTurn = squareClickHandler(this.state, this.setState.bind(this), moveValidator, updateBoard);
-        var computerTurn = function () {};
-        var clickHandler = (this.state.currentPlayer === 1) ? humanTurn : computerTurn;
+        var humanClickHandler = squareClickHandler(this.state, this.setState.bind(this), moveValidator, updateBoard);
+        var computerClickHandler = function () {};
+        var clickHandler = (this.state.currentPlayer === PLAYERS.HUMAN) ? humanClickHandler : computerClickHandler;
 
         var board = <Board
             gridSize={this.state.gridSize}
