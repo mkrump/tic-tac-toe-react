@@ -2,7 +2,6 @@ var React = require('react');
 var Board = require('./Board.react');
 var Reset = require('./Reset.react');
 var axios = require('axios');
-
 var Service = require('./Service.js');
 
 var init = function () {
@@ -17,9 +16,11 @@ var init = function () {
 var updateBoard = function (i, state, setState) {
     var squares = state.squares.slice();
     squares[i] = (state.currentPlayer === 1) ? 1 : -1;
+    currentPlayer = state.currentPlayer;
+    console.log("Update Board");
     return setState({
         squares: squares,
-        currentPlayer: -1 * state.currentPlayer
+        currentPlayer: -1 * currentPlayer,
     });
 };
 
@@ -56,22 +57,54 @@ var UIMarkers = function (board) {
 
 var Game = React.createClass({
     getInitialState: function () {
-        return init()
+        return init();
+    },
+
+    componentDidUpdate: function (prevProps, prevState) {
+        var computerMove = Service.computerMoveEndpoint.computerMove;
+        var currentPlayer = this.state.currentPlayer;
+        var squares = this.state.squares;
+        var gridSize = this.state.gridSize;
+        var state = this.state;
+        // TODO Need to understand binding better ...
+        var setState = this.setState.bind(this);
+        console.log("Here");
+        console.log(prevState.currentPlayer);
+        console.log(this.state.currentPlayer);
+        if (currentPlayer === -1) {
+            computerMove(currentPlayer, squares, gridSize, setState)
+                .then(function (success) {
+                    console.log('Response:' + JSON.stringify(success.data));
+                    console.log(success.data.move);
+                    updateBoard(success.data.move, state, setState);
+                    console.log("Even Here");
+                });
+        }
     },
 
     render: function () {
-        var squares = this.state.squares;
         var status = 'Next player: ' + ((this.state.currentPlayer) === 1 ? 'X' : 'O');
-        var moveValidator = Service.validateMove;
+        var board = this.board;
+        var moveValidator = Service.validateMoveEndpoint.validateMove;
 
+        if (this.state.currentPlayer === 1) {
+            board = <Board
+                gridSize={this.state.gridSize}
+                squares={UIMarkers(this.state.squares)}
+                onClick={squareClickHandler(this.state, this.setState.bind(this), moveValidator, updateBoard)}
+            />;
+        } else {
+            board = <Board
+                squares={UIMarkers(this.state.squares)}
+                gridSize={this.state.gridSize}
+                onClick={function () {
+                }}
+            />
+        }
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board
-                        gridSize={this.state.gridSize}
-                        squares={UIMarkers(squares)}
-                        onClick={squareClickHandler(this.state, this.setState.bind(this), moveValidator, updateBoard)}
-                    />
+                    {board}
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
