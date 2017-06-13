@@ -7,10 +7,11 @@ var Reset = require('../../src/components/Reset.react');
 
 describe('setInitialState', function () {
     it('initializes an initial game state object', function () {
-        var expected = {
-            squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf, 0),
-            gridSize: 3,
+        return {
+            board: {boardContents: [0, 0, 0, 0, 0, 0, 0, 0, 0], gridSize: 3},
             currentPlayer: 1,
+            winner: 0,
+            isTie: false,
         };
         var initStateObj = Game.setInitialState();
         expect(initStateObj).toEqual(expected);
@@ -54,21 +55,6 @@ describe('<Game />', function () {
         expect(reset.length).toEqual(1);
     });
 
-    it('updates Game state when updateBoard when called', function () {
-        var state = Game.setInitialState();
-        var setState = function (state) {
-            return state;
-        };
-
-        var nextState = Game.updateBoard(1, state, setState);
-
-        expect(state.squares[1]).toEqual(0);
-        expect(state.currentPlayer).toEqual(1);
-        expect(nextState.squares[1]).toEqual(1);
-        expect(nextState.currentPlayer).toEqual(-1);
-    });
-
-
     it('resets Game state when called', function () {
         var setState = function (state) {
             return state;
@@ -78,7 +64,7 @@ describe('<Game />', function () {
         expect(initialState).toEqual(updatedState);
 
         // Changed state should not equal initial state
-        updatedState.squares[0] = 1;
+        updatedState.board.boardContents[0] = 1;
         expect(initialState).not.toEqual(updatedState);
 
         var handler = Game.resetOnClick(setState);

@@ -5,35 +5,8 @@ var Service = require('./Service.js');
 
 
 // TODO TEST
-var humanMoveRequest = function (state, setState, validate) {
-    return function (move) {
-        validate(state, move)
-            .then(function (success) {
-                console.log('Human Move Response:' + JSON.stringify(success.data));
-                var responseData = success.data['game-state'];
-                setState({
-                    board: {
-                        boardContents: responseData.board['board-contents'],
-                        gridSize: responseData.board.gridsize
-                    },
-                    currentPlayer: responseData['current-player'],
-                    winner: responseData.winner,
-                    isTie: responseData['is-tie'],
-                });
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    console.log(error.response.data['error-response']);
-                    console.log(error.response.status);
-                }
-            })
-    }
-};
-
-// TODO TEST
-// TODO combine with above
-var makeComputerMove = function (state, setState, computerMove) {
-    computerMove(state)
+var apiCallThenUpdate = function (state, setState, apiCall, params) {
+    apiCall(state, params)
         .then(function (success) {
             console.log('Computer Move Response:' + JSON.stringify(success.data));
             var responseData = success.data['game-state'];
@@ -55,6 +28,12 @@ var makeComputerMove = function (state, setState, computerMove) {
         })
 };
 
+var humanMoveRequest = function (state, setState, apiCall) {
+    return function (move) {
+        apiCallThenUpdate(state, setState, apiCall, move);
+    };
+};
+
 var resetOnClick = function (setState) {
     var initialState = setInitialState();
     return function () {
@@ -73,7 +52,7 @@ var humanClickHandler = function (state, setState) {
 };
 
 var computerMoveHandler = function (state, setState) {
-    return makeComputerMove(state, setState, Service.computerMoveEndpoint.computerMove)
+    return apiCallThenUpdate(state, setState, Service.computerMoveEndpoint.computerMove)
 };
 
 var nullClickHandler = function (state, setState) {
@@ -101,7 +80,6 @@ var setDefaultProps = function () {
 };
 
 var setInitialState = function () {
-
     return {
         board: {boardContents: [0, 0, 0, 0, 0, 0, 0, 0, 0], gridSize: 3},
         currentPlayer: 1,
@@ -109,6 +87,31 @@ var setInitialState = function () {
         isTie: false,
     };
 };
+
+// TODO add test
+var isGameOver = function (winner, isTie) {
+    return (winner !== 0) || (isTie === true);
+};
+
+// TODO separate component + Test
+var GameStatus = React.createClass({
+    render: function () {
+        var status = 'Next player: ' + this.props.currentPlayer;
+        var winner = this.props.winner;
+        var isTie = this.props.isTie;
+        console.log(winner);
+        if (isTie === true) {
+            status = 'Tie!';
+        }
+        else if (winner !== undefined) {
+            status = winner + "'s Win!";
+        }
+        return (
+            <div>{status}</div>
+        )
+
+    }
+});
 
 var Game = React.createClass({
     getDefaultProps: function () {
@@ -120,44 +123,36 @@ var Game = React.createClass({
     },
 
     componentDidUpdate: function () {
-        if (this.state.currentPlayer === this.props.players.COMPUTER) {
+        if (this.state.currentPlayer === this.props.players.COMPUTER &&
+            !isGameOver(this.state.winner, this.state.isTie)) {
             // TODO Need to understand binding better ...
             this.props.makeComputerMove(this.state, this.setState.bind(this));
         }
     },
 
     render: function () {
-        var status = 'Next player: ' + this.props.playerMarkers[this.state.currentPlayer];
-        var winner = this.state.winner;
-        var isTie = this.state.isTie;
-        var gameOverMessage = "";
-        if (isTie === true)
-           gameOverMessage = 'Tie!';
-        else if (winner !== 0)
-           gameOverMessage = this.props.playerMarkers[winner] + "'s Win!";
-
         var clickHandler = this.props.playerClickHandlers[this.state.currentPlayer](this.state, this.setState.bind(this));
-
+        var clickHandler = isGameOver(this.state.winner, this.state.isTie) ? nullClickHandler : clickHandler;
         var board = <Board
             gridSize={this.state.board.gridSize}
             squares={UIMarkers(this.state.board.boardContents, this.props.playerMarkers)}
             onClick={clickHandler}
         />;
-        console.log(this.state);
-
         return (
             <div className="game">
                 <div className="game-board">
                     {board}
                 </div>
                 <div className="game-info">
-                    <div>{status}</div>
-                    <div>{gameOverMessage}</div>
-                    <div><Reset
+                    <GameStatus
+                        currentPlayer={this.props.playerMarkers[this.state.currentPlayer]}
+                        isTie={this.state.isTie}
+                        winner={this.props.playerMarkers[this.state.winner]}
+                    />
+                    <Reset
                         value={"Reset"}
                         onClick={resetOnClick(this.setState.bind(this))}
                     />
-                    </div>
                 </div>
             </div>
         );

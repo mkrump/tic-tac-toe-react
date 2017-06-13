@@ -58,6 +58,7 @@ ol, ul {
 }
 
 .reset-button{
+    text-align: center;
     font: 20px "Century Gothic", Futura, sans-serif;
     margin-top: 30px;
 }
