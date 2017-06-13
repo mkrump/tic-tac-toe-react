@@ -3,23 +3,23 @@ var Board = require('./Board.react');
 var Reset = require('./Reset.react');
 var Service = require('./Service.js');
 
-var updateBoard = function (i, state, setState) {
-    var squares = state.squares.slice();
-    squares[i] = (state.currentPlayer === 1) ? 1 : -1;
-    var currentPlayer = state.currentPlayer;
-    return setState({
-        squares: squares,
-        currentPlayer: -1 * currentPlayer,
-    });
-};
 
 // TODO TEST
-var humanMoveRequest = function (state, setState, validate, update) {
+var humanMoveRequest = function (state, setState, validate) {
     return function (move) {
-        validate(move, state.squares, state.gridSize)
+        validate(state, move)
             .then(function (success) {
-                console.log('Response:' + JSON.stringify(success.data));
-                update(move, state, setState);
+                console.log('Human Move Response:' + JSON.stringify(success.data));
+                var responseData = success.data['game-state'];
+                setState({
+                    board: {
+                        boardContents: responseData.board['board-contents'],
+                        gridSize: responseData.board.gridsize
+                    },
+                    currentPlayer: responseData['current-player'],
+                    winner: responseData.winner,
+                    isTie: responseData['is-tie'],
+                });
             })
             .catch(function (error) {
                 if (error.response) {
@@ -32,11 +32,20 @@ var humanMoveRequest = function (state, setState, validate, update) {
 
 // TODO TEST
 // TODO combine with above
-var makeComputerMove = function (state, setState, computerMove, update) {
-    computerMove(state.currentPlayer, state.squares, state.gridSize, setState)
+var makeComputerMove = function (state, setState, computerMove) {
+    computerMove(state)
         .then(function (success) {
-            console.log('Response:' + JSON.stringify(success.data));
-            update(success.data.move, state, setState);
+            console.log('Computer Move Response:' + JSON.stringify(success.data));
+            var responseData = success.data['game-state'];
+            setState({
+                board: {
+                    boardContents: responseData.board['board-contents'],
+                    gridSize: responseData.board.gridsize
+                },
+                currentPlayer: responseData['current-player'],
+                winner: responseData.winner,
+                isTie: responseData['is-tie'],
+            });
         })
         .catch(function (error) {
             if (error.response) {
@@ -60,11 +69,11 @@ var UIMarkers = function (board, playerMarkers) {
 };
 
 var humanClickHandler = function (state, setState) {
-    return humanMoveRequest(state, setState, Service.validateMoveEndpoint.validateMove, updateBoard)
+    return humanMoveRequest(state, setState, Service.validateMoveEndpoint.validateMove)
 };
 
 var computerMoveHandler = function (state, setState) {
-    return makeComputerMove(state, setState, Service.computerMoveEndpoint.computerMove, updateBoard)
+    return makeComputerMove(state, setState, Service.computerMoveEndpoint.computerMove)
 };
 
 var nullClickHandler = function (state, setState) {
@@ -94,10 +103,11 @@ var setDefaultProps = function () {
 var setInitialState = function () {
 
     return {
-        squares: Array.apply(null, Array(9)).map(Number.prototype.valueOf, 0),
-        gridSize: 3,
+        board: {boardContents: [0, 0, 0, 0, 0, 0, 0, 0, 0], gridSize: 3},
         currentPlayer: 1,
-    }
+        winner: 0,
+        isTie: false,
+    };
 };
 
 var Game = React.createClass({
@@ -118,13 +128,22 @@ var Game = React.createClass({
 
     render: function () {
         var status = 'Next player: ' + this.props.playerMarkers[this.state.currentPlayer];
+        var winner = this.state.winner;
+        var isTie = this.state.isTie;
+        var gameOverMessage = "";
+        if (isTie === true)
+           gameOverMessage = 'Tie!';
+        else if (winner !== 0)
+           gameOverMessage = this.props.playerMarkers[winner] + "'s Win!";
+
         var clickHandler = this.props.playerClickHandlers[this.state.currentPlayer](this.state, this.setState.bind(this));
 
         var board = <Board
-            gridSize={this.state.gridSize}
-            squares={UIMarkers(this.state.squares, this.props.playerMarkers)}
+            gridSize={this.state.board.gridSize}
+            squares={UIMarkers(this.state.board.boardContents, this.props.playerMarkers)}
             onClick={clickHandler}
         />;
+        console.log(this.state);
 
         return (
             <div className="game">
@@ -133,6 +152,7 @@ var Game = React.createClass({
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
+                    <div>{gameOverMessage}</div>
                     <div><Reset
                         value={"Reset"}
                         onClick={resetOnClick(this.setState.bind(this))}
@@ -147,7 +167,6 @@ var Game = React.createClass({
 
 module.exports = Game;
 module.exports.setInitialState = setInitialState;
-module.exports.updateBoard = updateBoard;
 module.exports.resetOnClick = resetOnClick;
 module.exports.UIMarkers = UIMarkers;
 module.exports.setDefaultProps = setDefaultProps;
