@@ -7,7 +7,7 @@ function Endpoint(url, timeout) {
     });
 }
 
-var validateMoveEndpoint = new Endpoint('https://tic-tac-toe-clojure.herokuapp.com', 10000);
+var validateMoveEndpoint = new Endpoint('https://tic-tac-toe-clojure.herokuapp.com', 15000);
 
 validateMoveEndpoint.validateMove = function (move, boardArray, gridSize) {
     return this.httpRequest({
@@ -20,7 +20,7 @@ validateMoveEndpoint.validateMove = function (move, boardArray, gridSize) {
     });
 }.bind(validateMoveEndpoint);
 
-var computerMoveEndpoint = new Endpoint('https://tic-tac-toe-clojure.herokuapp.com', 10000);
+var computerMoveEndpoint = new Endpoint('https://tic-tac-toe-clojure.herokuapp.com', 15000);
 
 computerMoveEndpoint.computerMove = function (currentPlayer, boardArray, gridSize) {
     return this.httpRequest({
