@@ -1,8 +1,12 @@
 var React = require('react');
 var Board = require('./Board.react');
 var Reset = require('./Reset.react');
-var axios = require('axios');
 var Service = require('./Service.js');
+
+var PLAYERS = {"COMPUTER": -1, "HUMAN": 1};
+var PLAYER_MARKERS = {};
+PLAYER_MARKERS[PLAYERS["HUMAN"]] = "X";
+PLAYER_MARKERS[PLAYERS["COMPUTER"]] = "O";
 
 var init = function () {
     return {
@@ -12,24 +16,23 @@ var init = function () {
     }
 };
 
-
 var updateBoard = function (i, state, setState) {
     var squares = state.squares.slice();
     squares[i] = (state.currentPlayer === 1) ? 1 : -1;
     currentPlayer = state.currentPlayer;
     console.log("Update Board");
-    return setState({
+    setState({
         squares: squares,
         currentPlayer: -1 * currentPlayer,
     });
 };
 
-var squareClickHandler = function (state, setState, validation, action) {
+var squareClickHandler = function (state, setState, validate, update) {
     return function (move) {
-        validation(move, state.squares, state.gridSize)
+        validate(move, state.squares, state.gridSize)
             .then(function (success) {
                 console.log('Response:' + JSON.stringify(success.data));
-                action(move, state, setState);
+                update(move, state, setState);
             })
             .catch(function (error) {
                 if (error.response) {
@@ -38,6 +41,20 @@ var squareClickHandler = function (state, setState, validation, action) {
                 }
             })
     }
+};
+
+var makeComputerMove = function (state, setState, computerMove, update) {
+    computerMove(state.currentPlayer, state.squares, state.gridSize, setState)
+        .then(function (success) {
+            console.log('Response:' + JSON.stringify(success.data));
+            update(success.data.move, state, setState);
+        })
+        .catch(function (error) {
+            if (error.response) {
+                console.log(error.response.data['error-response']);
+                console.log(error.response.status);
+            }
+        })
 };
 
 var resetOnClick = function (setState) {
@@ -49,9 +66,7 @@ var resetOnClick = function (setState) {
 
 var UIMarkers = function (board) {
     return board.map(function (square) {
-        if (square === 1) return "X";
-        else if (square === -1) return "O";
-        else return "";
+        return (square === 0) ? "" : PLAYER_MARKERS[square];
     });
 };
 
@@ -60,47 +75,29 @@ var Game = React.createClass({
         return init();
     },
 
-    componentDidUpdate: function (prevProps, prevState) {
+    componentDidUpdate: function () {
         var computerMove = Service.computerMoveEndpoint.computerMove;
         var currentPlayer = this.state.currentPlayer;
-        var squares = this.state.squares;
-        var gridSize = this.state.gridSize;
-        var state = this.state;
         // TODO Need to understand binding better ...
         var setState = this.setState.bind(this);
-        console.log("Here");
-        console.log(prevState.currentPlayer);
-        console.log(this.state.currentPlayer);
         if (currentPlayer === -1) {
-            computerMove(currentPlayer, squares, gridSize, setState)
-                .then(function (success) {
-                    console.log('Response:' + JSON.stringify(success.data));
-                    console.log(success.data.move);
-                    updateBoard(success.data.move, state, setState);
-                    console.log("Even Here");
-                });
+            makeComputerMove(this.state, setState, computerMove, updateBoard);
         }
     },
 
     render: function () {
-        var status = 'Next player: ' + ((this.state.currentPlayer) === 1 ? 'X' : 'O');
-        var board = this.board;
         var moveValidator = Service.validateMoveEndpoint.validateMove;
+        var status = 'Next player: ' + PLAYER_MARKERS[this.state.currentPlayer];
+        var humanTurn = squareClickHandler(this.state, this.setState.bind(this), moveValidator, updateBoard);
+        var computerTurn = function () {};
+        var clickHandler = (this.state.currentPlayer === 1) ? humanTurn : computerTurn;
 
-        if (this.state.currentPlayer === 1) {
-            board = <Board
-                gridSize={this.state.gridSize}
-                squares={UIMarkers(this.state.squares)}
-                onClick={squareClickHandler(this.state, this.setState.bind(this), moveValidator, updateBoard)}
-            />;
-        } else {
-            board = <Board
-                squares={UIMarkers(this.state.squares)}
-                gridSize={this.state.gridSize}
-                onClick={function () {
-                }}
-            />
-        }
+        var board = <Board
+            gridSize={this.state.gridSize}
+            squares={UIMarkers(this.state.squares)}
+            onClick={clickHandler}
+        />;
+
         return (
             <div className="game">
                 <div className="game-board">
