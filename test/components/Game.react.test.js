@@ -7,7 +7,7 @@ var Reset = require('../../src/components/Reset.react');
 
 describe('setInitialState', function () {
     it('initializes an initial game state object', function () {
-        return {
+        var expected = {
             board: {boardContents: [0, 0, 0, 0, 0, 0, 0, 0, 0], gridSize: 3},
             currentPlayer: 1,
             winner: 0,
@@ -21,13 +21,12 @@ describe('setInitialState', function () {
 describe('setDefaultProps', function () {
     it('initializes an initial props object', function () {
         var expected = {
-            players : {"COMPUTER": -1, "HUMAN": 1},
-            playerMarkers : {"-1": "O", "1": "X"},
+            players: {"COMPUTER": -1, "HUMAN": 1},
+            playerMarkers: {"-1": "O", "1": "X"},
             playerClickHandlers: {"-1": Game.nullClickHandler, "1": Game.humanClickHandler},
             makeComputerMove: Game.computerMoveHandler,
         };
         var initPropObj = Game.setDefaultProps();
-        console.log(initPropObj);
         expect(initPropObj).toEqual(expected);
     });
 });
@@ -38,6 +37,18 @@ describe('UIMarkers', function () {
         var uiMarkers = Game.UIMarkers([0, 1, -1], playerMarkers);
         var expected = ["", "X", "O"];
         expect(uiMarkers).toEqual(expected);
+    });
+});
+
+describe('gameOver', function () {
+    it('returns true if is a winner', function () {
+        expect(Game.isGameOver(1, false)).toEqual(true);
+    });
+    it('returns true if is a tie', function () {
+        expect(Game.isGameOver(0, true)).toEqual(true);
+    });
+    it('returns false if not win or tie', function () {
+        expect(Game.isGameOver(0, false)).toEqual(false);
     });
 });
 
@@ -75,7 +86,84 @@ describe('<Game />', function () {
     });
 });
 
-describe('API calls', function () {
+describe('Computer Move', function () {
+    describe('componentDidUpdate', function () {
+        it('calls makeComputerMove', function () {
+            instance = ReactTestUtils.renderIntoDocument(<Game />);
+            spyOn(instance.props, 'makeComputerMove');
+            ReactTestUtils.renderIntoDocument(<Game currentPlayer={-1}/>);
+            expect(instance.props.makeComputerMove).toHaveBeenCalled();
+        });
+    });
+});
+
+describe('httpRequest success callback', function () {
+    var setState;
+    var success;
+
+    beforeEach(function () {
+        setState = function (state) {
+            return state;
+        };
+        success = {
+            "data": {
+                "game-state": {
+                    "board": {"board-contents": [1, 1, 0, 0, -1, 0, 0, 0, 0], "gridsize": 3},
+                    "winner": 0,
+                    "is-tie": false,
+                    "current-player": -1
+                },
+                "message": "Success"
+            }
+        }
+    });
+
+    it('calls setState with response data', function () {
+        var expected = {
+            board: {
+                boardContents: [1, 1, 0, 0, -1, 0, 0, 0, 0],
+                gridSize: 3
+            },
+            currentPlayer: -1,
+            winner: 0,
+            isTie: false
+        };
+        var updatedState = Game.successCallback(success, setState);
+        expect(updatedState).toEqual(expected);
+    });
+});
+
+describe('httpRequest error callback', function () {
+    var setState;
+    var error;
+
+    beforeEach(function () {
+        setState = function (state) {
+            return state;
+        };
+        error = {
+            "response": {
+                "data": {
+                    "game-state": {
+                        "board": {"board-contents": [1, 1, 0, 0, -1, 0, 0, 0, 0], "gridsize": 3},
+                        "winner": 0,
+                        "is-tie": false,
+                        "current-player": -1
+                    },
+                    "message": "Failed"
+                }
+            }
+        }
+    });
+
+    it('logs error message to console', function () {
+        spyOn(console, 'log');
+        Game.errorCallback(error);
+        expect(console.log).toHaveBeenCalledWith("Failed");
+    });
+});
+
+describe('HTTP calls', function () {
     var mockValidator;
     var validator;
     var state;
@@ -87,33 +175,28 @@ describe('API calls', function () {
             return state;
         };
         mockValidator = {
-            mockApiSuccess: function () {
+            mockHttpSuccess: function () {
                 console.log(arguments.callee.name + " Was Called");
-                return Promise.resolve();
+                return Promise.resolve({
+                    then: function (f) {
+                        f();
+                    }
+                });
             },
-            mockApiReject: function () {
+            mockHttpReject: function () {
                 return Promise.reject();
             },
-            mockUpdate: function () {
-                console.log(arguments.callee.name + " Was Called");
-            }
         };
-        validator = Game.humanMoveRequest(state, setState,
-            mockValidator.mockApiSuccess, mockValidator.mockUpdate);
+
+        spyOn(Game, 'successCallback');
         console.log("Finished Setup");
-        spyOn(mockValidator, 'mockApiSuccess');
-        spyOn(mockValidator, 'mockUpdate');
-        validator(1);
         done();
     });
 
+
     it('validates move when called', function (done) {
-        console.log("Starting Tests");
-        console.log("Expecting Success");
-        expect(mockValidator.mockApiSuccess).toHaveBeenCalled();
-        console.log("Expecting Update");
-        expect(mockValidator.mockUpdate).toHaveBeenCalled();
-        console.log("Finished Test");
+        Game.HttpRequestToUpdateState(state, setState, mockValidator.mockHttpSuccess);
+        expect(Game.successCallback).toHaveBeenCalled();
         done();
     });
 });

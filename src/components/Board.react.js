@@ -10,9 +10,9 @@ var Board = React.createClass({
     renderSquare: function (i) {
         var contents = squareContents(this.props.squares[i]);
         return (<Square
-                    key={i}
-                    value={contents}
-                    onClick={this.props.onClick.bind(null, i)} />);
+            key={i}
+            value={contents}
+            onClick={this.props.onClick.bind(null, i)}/>);
     },
 
     renderBoardRow: function (row) {
@@ -34,7 +34,7 @@ var Board = React.createClass({
             board.push(this.renderBoardRow(row));
         }
         return (
-            <div>
+            <div className="game-board">
                 {board}
             </div>
         );

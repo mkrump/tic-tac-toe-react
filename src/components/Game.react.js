@@ -2,35 +2,40 @@ var React = require('react');
 var Board = require('./Board.react');
 var Reset = require('./Reset.react');
 var Service = require('./Service.js');
+var GameStatus = require('./GameStatus.react');
 
-
-// TODO TEST
-var apiCallThenUpdate = function (state, setState, apiCall, params) {
-    apiCall(state, params)
-        .then(function (success) {
-            console.log('Computer Move Response:' + JSON.stringify(success.data));
-            var responseData = success.data['game-state'];
-            setState({
-                board: {
-                    boardContents: responseData.board['board-contents'],
-                    gridSize: responseData.board.gridsize
-                },
-                currentPlayer: responseData['current-player'],
-                winner: responseData.winner,
-                isTie: responseData['is-tie'],
-            });
-        })
-        .catch(function (error) {
-            if (error.response) {
-                console.log(error.response.data['error-response']);
-                console.log(error.response.status);
-            }
-        })
+var successCallback = function (success, setState) {
+    var responseData = success.data['game-state'];
+    var updatedState = {
+        board: {
+            boardContents: responseData.board['board-contents'],
+            gridSize: responseData.board.gridsize
+        },
+        currentPlayer: responseData['current-player'],
+        winner: responseData.winner,
+        isTie: responseData['is-tie'],
+    };
+    return setState(updatedState);
 };
 
-var humanMoveRequest = function (state, setState, apiCall) {
+var errorCallback = function (error) {
+    if (error.response) {
+        console.log(error.response.data['message']);
+        console.log(error.response.status);
+    }
+};
+
+var HttpRequestToUpdateState = function (state, setState, HttpRequest, params) {
+    HttpRequest(state, params)
+        .then(function (response) {
+            successCallback(response, setState);
+        })
+        .catch(errorCallback);
+};
+
+var humanMoveRequest = function (state, setState, HttpRequest) {
     return function (move) {
-        apiCallThenUpdate(state, setState, apiCall, move);
+        HttpRequestToUpdateState(state, setState, HttpRequest, move);
     };
 };
 
@@ -52,7 +57,7 @@ var humanClickHandler = function (state, setState) {
 };
 
 var computerMoveHandler = function (state, setState) {
-    return apiCallThenUpdate(state, setState, Service.computerMoveEndpoint.computerMove)
+    return HttpRequestToUpdateState(state, setState, Service.computerMoveEndpoint.computerMove)
 };
 
 var nullClickHandler = function (state, setState) {
@@ -88,30 +93,9 @@ var setInitialState = function () {
     };
 };
 
-// TODO add test
 var isGameOver = function (winner, isTie) {
     return (winner !== 0) || (isTie === true);
 };
-
-// TODO separate component + Test
-var GameStatus = React.createClass({
-    render: function () {
-        var status = 'Next player: ' + this.props.currentPlayer;
-        var winner = this.props.winner;
-        var isTie = this.props.isTie;
-        console.log(winner);
-        if (isTie === true) {
-            status = 'Tie!';
-        }
-        else if (winner !== undefined) {
-            status = winner + "'s Win!";
-        }
-        return (
-            <div>{status}</div>
-        )
-
-    }
-});
 
 var Game = React.createClass({
     getDefaultProps: function () {
@@ -125,24 +109,20 @@ var Game = React.createClass({
     componentDidUpdate: function () {
         if (this.state.currentPlayer === this.props.players.COMPUTER &&
             !isGameOver(this.state.winner, this.state.isTie)) {
-            // TODO Need to understand binding better ...
             this.props.makeComputerMove(this.state, this.setState.bind(this));
         }
     },
 
     render: function () {
         var clickHandler = this.props.playerClickHandlers[this.state.currentPlayer](this.state, this.setState.bind(this));
-        var clickHandler = isGameOver(this.state.winner, this.state.isTie) ? nullClickHandler : clickHandler;
-        var board = <Board
-            gridSize={this.state.board.gridSize}
-            squares={UIMarkers(this.state.board.boardContents, this.props.playerMarkers)}
-            onClick={clickHandler}
-        />;
+        clickHandler = isGameOver(this.state.winner, this.state.isTie) ? nullClickHandler : clickHandler;
         return (
             <div className="game">
-                <div className="game-board">
-                    {board}
-                </div>
+                <Board
+                    gridSize={this.state.board.gridSize}
+                    squares={UIMarkers(this.state.board.boardContents, this.props.playerMarkers)}
+                    onClick={clickHandler}
+                />
                 <div className="game-info">
                     <GameStatus
                         currentPlayer={this.props.playerMarkers[this.state.currentPlayer]}
@@ -165,7 +145,12 @@ module.exports.setInitialState = setInitialState;
 module.exports.resetOnClick = resetOnClick;
 module.exports.UIMarkers = UIMarkers;
 module.exports.setDefaultProps = setDefaultProps;
-module.exports.humanClickHandler = humanClickHandler;
 module.exports.humanMoveRequest = humanMoveRequest;
 module.exports.nullClickHandler = nullClickHandler;
+module.exports.isGameOver = isGameOver;
+module.exports.humanClickHandler = humanClickHandler;
 module.exports.computerMoveHandler = computerMoveHandler;
+module.exports.HttpRequestToUpdateState = HttpRequestToUpdateState;
+module.exports.successCallback = successCallback;
+module.exports.errorCallback = errorCallback;
+
