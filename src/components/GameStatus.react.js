@@ -1,7 +1,7 @@
 var React = require('react');
 
 var setStatusMessage = function (currentPlayer, isTie, winner) {
-    var statusMessage = 'Next player: ' + currentPlayer;
+    var statusMessage = 'Current player: ' + currentPlayer;
     if (isTie === true) {
         statusMessage = 'Tie!';
     }

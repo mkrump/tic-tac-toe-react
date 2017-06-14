@@ -5,7 +5,7 @@ var GameStatus = require('../../src/components/GameStatus.react');
 
 describe('setStatus', function () {
     it('prompts the current player when game is not over', function () {
-        expect(GameStatus.setStatusMessage("X", false)).toEqual('Next player: X');
+        expect(GameStatus.setStatusMessage("X", false)).toEqual('Current player: X');
     });
     it('returns "Tie!" if game is a tie', function () {
         expect(GameStatus.setStatusMessage("X", true)).toEqual('Tie!');

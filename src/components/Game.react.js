@@ -80,7 +80,6 @@ var setDefaultProps = function () {
         players: players,
         playerMarkers: playerMarkers,
         playerClickHandlers: playerClickHandlers,
-        makeComputerMove: computerMoveHandler,
     }
 };
 
@@ -98,6 +97,7 @@ var isGameOver = function (winner, isTie) {
 };
 
 var Game = React.createClass({
+
     getDefaultProps: function () {
         return setDefaultProps();
     },
@@ -106,10 +106,14 @@ var Game = React.createClass({
         return setInitialState();
     },
 
+    makeComputerMove : function(state, setState){
+        computerMoveHandler(state, setState);
+    },
+
     componentDidUpdate: function () {
         if (this.state.currentPlayer === this.props.players.COMPUTER &&
             !isGameOver(this.state.winner, this.state.isTie)) {
-            this.props.makeComputerMove(this.state, this.setState.bind(this));
+            this.makeComputerMove(this.state, this.setState.bind(this));
         }
     },
 

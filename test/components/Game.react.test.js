@@ -24,7 +24,6 @@ describe('setDefaultProps', function () {
             players: {"COMPUTER": -1, "HUMAN": 1},
             playerMarkers: {"-1": "O", "1": "X"},
             playerClickHandlers: {"-1": Game.nullClickHandler, "1": Game.humanClickHandler},
-            makeComputerMove: Game.computerMoveHandler,
         };
         var initPropObj = Game.setDefaultProps();
         expect(initPropObj).toEqual(expected);
@@ -84,18 +83,42 @@ describe('<Game />', function () {
         expect(resetState).toEqual(initialState);
 
     });
-});
+    describe('Computer Move', function () {
+        var game;
+        var computerPlayer;
+        var humanPlayer;
+        var computerPlayerMarker;
 
-describe('Computer Move', function () {
-    describe('componentDidUpdate', function () {
-        it('calls makeComputerMove', function () {
-            instance = ReactTestUtils.renderIntoDocument(<Game />);
-            spyOn(instance.props, 'makeComputerMove');
-            ReactTestUtils.renderIntoDocument(<Game currentPlayer={-1}/>);
-            expect(instance.props.makeComputerMove).toHaveBeenCalled();
+        beforeEach(function () {
+            game = ReactTestUtils.renderIntoDocument(<Game />);
+            spyOn(game, 'makeComputerMove');
+            computerPlayer = game.props.players.COMPUTER;
+            humanPlayer = game.props.players.HUMAN;
+            computerPlayerMarker = game.props.playerMarkers[computerPlayer];
+        });
+
+        it('calls makeComputerMove when computer turn', function () {
+            game.setState({currentPlayer: game.props.players.COMPUTER});
+            expect(game.makeComputerMove).toHaveBeenCalled();
+        });
+
+        it('does not call makeComputerMove when not computer turn', function () {
+            game.setState({currentPlayer: humanPlayer});
+            expect(game.makeComputerMove).not.toHaveBeenCalled();
+        });
+
+        it('does not call makeComputerMove when game over even if computer turn', function () {
+            game.setState({currentPlayer: computerPlayer, isTie: true});
+            expect(game.makeComputerMove).not.toHaveBeenCalled();
+        });
+
+        it('does not call makeComputerMove when game over even if computer turn', function () {
+            game.setState({currentPlayer: computerPlayer, winner: computerPlayerMarker});
+            expect(game.makeComputerMove).not.toHaveBeenCalled();
         });
     });
 });
+
 
 describe('httpRequest success callback', function () {
     var setState;
@@ -163,40 +186,4 @@ describe('httpRequest error callback', function () {
     });
 });
 
-describe('HTTP calls', function () {
-    var mockValidator;
-    var validator;
-    var state;
-    var setState;
 
-    beforeEach(function (done) {
-        state = Game.setInitialState();
-        setState = function (state) {
-            return state;
-        };
-        mockValidator = {
-            mockHttpSuccess: function () {
-                console.log(arguments.callee.name + " Was Called");
-                return Promise.resolve({
-                    then: function (f) {
-                        f();
-                    }
-                });
-            },
-            mockHttpReject: function () {
-                return Promise.reject();
-            },
-        };
-
-        spyOn(Game, 'successCallback');
-        console.log("Finished Setup");
-        done();
-    });
-
-
-    it('validates move when called', function (done) {
-        Game.HttpRequestToUpdateState(state, setState, mockValidator.mockHttpSuccess);
-        expect(Game.successCallback).toHaveBeenCalled();
-        done();
-    });
-});
