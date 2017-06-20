@@ -106,7 +106,7 @@ var Game = React.createClass({
         return setInitialState();
     },
 
-    makeComputerMove : function(state, setState){
+    makeComputerMove: function (state, setState) {
         computerMoveHandler(state, setState);
     },
 
@@ -142,7 +142,6 @@ var Game = React.createClass({
         );
     }
 });
-
 
 module.exports = Game;
 module.exports.setInitialState = setInitialState;

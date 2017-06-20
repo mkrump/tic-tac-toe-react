@@ -1,6 +1,5 @@
 var React = require('react');
 var ReactTestUtils = require('react-dom/test-utils');
-
 var Board = require('../../src/components/Board.react');
 var squareContents = require('../../src/components/Board.react');
 var Square = require('../../src/components/Square.react');
@@ -28,8 +27,8 @@ describe('<Board />', function () {
         gridsize = 3;
         squaresArray =
             [0, 0, "X",
-             0, 0, 0,
-             0, 0, 0];
+                0, 0, 0,
+                0, 0, 0];
         handleClick = function () {
         };
         board = ReactTestUtils.renderIntoDocument(

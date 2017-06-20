@@ -1,6 +1,5 @@
 var React = require('react');
 var ReactTestUtils = require('react-dom/test-utils');
-
 var GameStatus = require('../../src/components/GameStatus.react');
 
 describe('setStatus', function () {

@@ -1,6 +1,5 @@
 var React = require('react');
 var ReactTestUtils = require('react-dom/test-utils');
-
 var Reset = require('../../src/components/Reset.react');
 
 describe('<Reset />', function () {

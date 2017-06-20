@@ -11,7 +11,6 @@ var setStatusMessage = function (currentPlayer, isTie, winner) {
     return statusMessage;
 };
 
-
 var GameStatus = React.createClass({
     render: function () {
         var statusMessage = setStatusMessage(this.props.currentPlayer, this.props.isTie, this.props.winner);
