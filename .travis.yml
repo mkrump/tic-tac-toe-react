@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+- '8'
+deploy:
+  provider: heroku
+  api_key:
+    secure: WWENMTY/ABzkObhjUqWvmZd+FoBky/zm2K7nTYlay5z4QAfpV/I0XQA3NINjjp3PlQbkkoN/T2SpXYB8MprsAQXgzw9+K3tRUTYt51H1WeuPwflqeybfw9EZlDW3CU+2sFk6fvXLZ3IOwSOPCQvDRfHoqWbbyNBYF6Zc+0AJAxX905ICLJ+cMN74eWS4VtgW42EvkKK1RqALkRKwC85bOsC+bL74Lk7mtimDq+Hb08dqeobma2Dhkwfu6v4VyifPeJ6zDvvO9P9Dt9386EUZO/Dl7Ztu3Rlgne3LRNdT/iQ3OOhgOrLD1NDCsErCsD5yp6D5XAHCYOW7FMUmjAZP0we9pBLytHt6oAYhS71XKgjQfLYMWOtUwG63zoXxslYwyCTbOTUiUbewu6mJdtKdZSWeu1Uh0F7jIWOB4HNhsDdYL4rce2r2+L7K+hpYP27jvV0N4tmJ2lEHpA+w1HtQNz8oNuaXy8Hnj+3EYDPgpbSKaGuVlSWnNlc5UeDi0UOpKeYH4AMPN0o3losamRRGaLzDELtZa38kTGWWa0Mjb9VOLOR1oqY/Y32sTD6bCmfywWfGRRRF6T3MFs90OmEu7Tq5RdYLG2LFicRkKqDokGAJDQFS03CFB0Psyakv4rfX6TT+5ehHxvWX7IsNl2MSG75NhFOYzZh6NgNnwaYPl2k=
+  app: react-ttt
+  on:
+    repo: mkrump/tic-tac-toe-react
+    branch: feedback

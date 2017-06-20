@@ -12,7 +12,7 @@ var logRequest = function(request) {
   var query  = JSON.stringify(request.query);
 
   console.log('Received request: ', [method, url, params, query].join("  "));
-}
+};
 
 app.set('port', port);
 

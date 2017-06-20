@@ -1,6 +1,5 @@
 var React = require('react');
 var ReactTestUtils = require('react-dom/test-utils');
-
 var Board = require('../../src/components/Board.react');
 var Game = require('../../src/components/Game.react');
 var Reset = require('../../src/components/Reset.react');

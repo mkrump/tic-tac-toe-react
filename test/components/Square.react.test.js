@@ -1,6 +1,5 @@
 var React = require('react');
 var ReactTestUtils = require('react-dom/test-utils');
-
 var Square = require('../../src/components/Square.react');
 
 describe('<Square />', function () {
