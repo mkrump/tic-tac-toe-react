@@ -41,11 +41,11 @@ var UIMarkers = function (board, playerMarkers) {
 };
 
 var humanClickHandler = function (state, setState) {
-    return humanMoveRequest(state, setState, service.validateMoveEndpoint.validateMove)
+    return humanMoveRequest(state, setState, service.TicTacToeEndpoint.validateMove)
 };
 
 var computerMoveHandler = function (state, setState) {
-    return HttpRequestToUpdateState(state, setState, service.computerMoveEndpoint.computerMove)
+    return HttpRequestToUpdateState(state, setState, service.TicTacToeEndpoint.computerMove)
 };
 
 var nullClickHandler = function (state, setState) {

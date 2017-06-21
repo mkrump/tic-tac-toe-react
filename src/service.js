@@ -1,11 +1,9 @@
 var axios = require('axios');
 
-function Endpoint(url, timeout) {
-    this.httpRequest = axios.create({
-        baseURL: url,
-        timeout: timeout,
-    });
-}
+var TicTacToeEndpoint = axios.create({
+    baseURL: 'https://tic-tac-toe-clojure.herokuapp.com',
+    timeout: 15000
+});
 
 var translateGameStateToAPIFormat = function (gameState) {
     return {
@@ -31,9 +29,7 @@ var translateGameStateFromAPIFormat = function (responseData) {
     };
 };
 
-var validateMoveEndpoint = new Endpoint('https://tic-tac-toe-clojure.herokuapp.com', 15000);
-
-validateMoveEndpoint.validateMove = function (gameState, move) {
+TicTacToeEndpoint.validateMove = function (gameState, move) {
     return this.httpRequest({
         method: 'post',
         url: '/valid-move',
@@ -42,11 +38,9 @@ validateMoveEndpoint.validateMove = function (gameState, move) {
             "game-state": translateGameStateToAPIFormat(gameState),
         }
     });
-}.bind(validateMoveEndpoint);
+}.bind(TicTacToeEndpoint);
 
-var computerMoveEndpoint = new Endpoint('https://tic-tac-toe-clojure.herokuapp.com', 15000);
-
-computerMoveEndpoint.computerMove = function (gameState) {
+TicTacToeEndpoint.computerMove = function (gameState) {
     return this.httpRequest({
         method: 'post',
         url: '/computer-move',
@@ -54,34 +48,9 @@ computerMoveEndpoint.computerMove = function (gameState) {
             "game-state": translateGameStateToAPIFormat(gameState),
         }
     });
-}.bind(computerMoveEndpoint);
+}.bind(TicTacToeEndpoint);
 
-var gameState = {
-    board: {boardContents: [1, 0, 0, 0, 0, 0, 0, 0, 0], gridSize: 3},
-    currentPlayer: -1,
-    winner: 0,
-    isTie: false,
-    gameOver: false
-};
-
-validateMoveEndpoint.validateMove(gameState, 1)
-    .then(function (response) {
-        console.log(response);
-    })
-    .catch(function (response) {
-        console.log(response);
-    });
-
-computerMoveEndpoint.computerMove(gameState)
-    .then(function (response) {
-        console.log(response);
-    })
-    .catch(function (response) {
-        console.log(response);
-    });
-
-module.exports.validateMoveEndpoint = validateMoveEndpoint;
-module.exports.computerMoveEndpoint = computerMoveEndpoint;
+module.exports.TicTacToeEndpoint = TicTacToeEndpoint;
 module.exports.translateGameStateToAPIFormat = translateGameStateToAPIFormat;
 module.exports.translateGameStateFromAPIFormat = translateGameStateFromAPIFormat;
 

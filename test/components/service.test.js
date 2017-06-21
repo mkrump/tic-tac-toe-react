@@ -16,10 +16,10 @@ describe('validateMoveEndpoint', function () {
 
     it('Is called with gameState and move', function () {
         var move = 1;
-        spyOn(service.validateMoveEndpoint, 'validateMove');
-        service.validateMoveEndpoint.validateMove(gameState, move);
-        expect(service.validateMoveEndpoint.httpRequest.defaults.baseURL).toEqual("https://tic-tac-toe-clojure.herokuapp.com");
-        expect(service.validateMoveEndpoint.validateMove).toHaveBeenCalledWith(gameState, move);
+        spyOn(service.TicTacToeEndpoint, 'validateMove');
+        service.TicTacToeEndpoint.validateMove(gameState, move);
+        expect(service.TicTacToeEndpoint.defaults.baseURL).toEqual("https://tic-tac-toe-clojure.herokuapp.com");
+        expect(service.TicTacToeEndpoint.validateMove).toHaveBeenCalledWith(gameState, move);
     });
 });
 
@@ -37,10 +37,10 @@ describe('computerMoveEndpoint', function () {
     });
 
     it('Is called with gameState', function () {
-        spyOn(service.computerMoveEndpoint, 'computerMove');
-        service.computerMoveEndpoint.computerMove(gameState);
-        expect(service.computerMoveEndpoint.httpRequest.defaults.baseURL).toEqual("https://tic-tac-toe-clojure.herokuapp.com");
-        expect(service.computerMoveEndpoint.computerMove).toHaveBeenCalledWith(gameState);
+        spyOn(service.TicTacToeEndpoint, 'computerMove');
+        service.TicTacToeEndpoint.computerMove(gameState);
+        expect(service.TicTacToeEndpoint.defaults.baseURL).toEqual("https://tic-tac-toe-clojure.herokuapp.com");
+        expect(service.TicTacToeEndpoint.computerMove).toHaveBeenCalledWith(gameState);
     });
 });
 
