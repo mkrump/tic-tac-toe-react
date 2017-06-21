@@ -42,14 +42,10 @@ describe('<Game />', function () {
         });
 
         it('does not call makeComputerMove when game over even if computer turn', function () {
-            game.setState({currentPlayer: computerPlayer, isTie: true});
+            game.setState({currentPlayer: computerPlayer, gameOver: true});
             expect(game.makeComputerMove).not.toHaveBeenCalled();
         });
 
-        it('does not call makeComputerMove when game over even if computer turn', function () {
-            game.setState({currentPlayer: computerPlayer, winner: computerPlayerMarker});
-            expect(game.makeComputerMove).not.toHaveBeenCalled();
-        });
     });
 });
 

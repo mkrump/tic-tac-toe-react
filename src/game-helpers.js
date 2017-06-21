@@ -81,17 +81,12 @@ var setInitialState = function () {
     };
 };
 
-var isGameOver = function (winner, isTie) {
-    return (winner !== 0) || (isTie === true);
-};
-
 module.exports.setInitialState = setInitialState;
 module.exports.resetOnClick = resetOnClick;
 module.exports.UIMarkers = UIMarkers;
 module.exports.setDefaultProps = setDefaultProps;
 module.exports.humanMoveRequest = humanMoveRequest;
 module.exports.nullClickHandler = nullClickHandler;
-module.exports.isGameOver = isGameOver;
 module.exports.humanClickHandler = humanClickHandler;
 module.exports.computerMoveHandler = computerMoveHandler;
 module.exports.HttpRequestToUpdateState = HttpRequestToUpdateState;

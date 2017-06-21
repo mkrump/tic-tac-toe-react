@@ -55,18 +55,6 @@ describe('UIMarkers', function () {
     });
 });
 
-describe('gameOver', function () {
-    it('returns true if is a winner', function () {
-        expect(gameHelpers.isGameOver(1, false)).toEqual(true);
-    });
-    it('returns true if is a tie', function () {
-        expect(gameHelpers.isGameOver(0, true)).toEqual(true);
-    });
-    it('returns false if not win or tie', function () {
-        expect(gameHelpers.isGameOver(0, false)).toEqual(false);
-    });
-});
-
 describe('httpRequest success callback', function () {
     var setState;
     var success;

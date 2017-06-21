@@ -19,15 +19,14 @@ var Game = React.createClass({
     },
 
     componentDidUpdate: function () {
-        if (this.state.currentPlayer === this.props.players.COMPUTER &&
-            !gameHelpers.isGameOver(this.state.winner, this.state.isTie)) {
+        if (this.state.currentPlayer === this.props.players.COMPUTER && this.state.gameOver === false) {
             this.makeComputerMove(this.state, this.setState.bind(this));
         }
     },
 
     render: function () {
         var clickHandler = this.props.playerClickHandlers[this.state.currentPlayer](this.state, this.setState.bind(this));
-        clickHandler = gameHelpers.isGameOver(this.state.winner, this.state.isTie) ? gameHelpers.nullClickHandler : clickHandler;
+        clickHandler = this.state.gameOver.isGameOver ? gameHelpers.nullClickHandler : clickHandler;
         return (
             <div className="game">
                 <Board
