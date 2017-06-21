@@ -7,6 +7,30 @@ function Endpoint(url, timeout) {
     });
 }
 
+var translateGameStateToAPIFormat = function (gameState) {
+    return {
+        board: {"board-contents": gameState.board.boardContents, gridsize: gameState.board.gridSize},
+        "current-player": gameState.currentPlayer,
+        winner: gameState.winner,
+        "is-tie": gameState.isTie,
+        "game-over": gameState.gameOver
+    }
+};
+
+var translateGameStateFromAPIFormat = function (responseData) {
+    return {
+        board: {
+            boardContents: responseData.board['board-contents'],
+            gridSize: responseData.board.gridsize
+        },
+        currentPlayer: responseData['current-player'],
+        winner: responseData.winner,
+        isTie: responseData['is-tie'],
+        gameOver: responseData['game-over']
+
+    };
+};
+
 var validateMoveEndpoint = new Endpoint('https://tic-tac-toe-clojure.herokuapp.com', 15000);
 
 validateMoveEndpoint.validateMove = function (gameState, move) {
@@ -15,12 +39,7 @@ validateMoveEndpoint.validateMove = function (gameState, move) {
         url: '/valid-move',
         data: {
             move: move,
-            "game-state": {
-                board: {"board-contents": gameState.board.boardContents, gridsize: gameState.board.gridSize},
-                "current-player": gameState.currentPlayer,
-                winner: gameState.winner,
-                "is-tie": gameState.isTie,
-            },
+            "game-state": translateGameStateToAPIFormat(gameState),
         }
     });
 }.bind(validateMoveEndpoint);
@@ -32,12 +51,7 @@ computerMoveEndpoint.computerMove = function (gameState) {
         method: 'post',
         url: '/computer-move',
         data: {
-            "game-state": {
-                board: {"board-contents": gameState.board.boardContents, gridsize: gameState.board.gridSize},
-                "current-player": gameState.currentPlayer,
-                winner: gameState.winner,
-                "is-tie": gameState.isTie,
-            }
+            "game-state": translateGameStateToAPIFormat(gameState),
         }
     });
 }.bind(computerMoveEndpoint);
@@ -47,6 +61,7 @@ var gameState = {
     currentPlayer: -1,
     winner: 0,
     isTie: false,
+    gameOver: false
 };
 
 validateMoveEndpoint.validateMove(gameState, 1)
@@ -67,4 +82,6 @@ computerMoveEndpoint.computerMove(gameState)
 
 module.exports.validateMoveEndpoint = validateMoveEndpoint;
 module.exports.computerMoveEndpoint = computerMoveEndpoint;
+module.exports.translateGameStateToAPIFormat = translateGameStateToAPIFormat;
+module.exports.translateGameStateFromAPIFormat = translateGameStateFromAPIFormat;
 

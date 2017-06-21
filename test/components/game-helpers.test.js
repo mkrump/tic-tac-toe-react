@@ -7,6 +7,7 @@ describe('setInitialState', function () {
             currentPlayer: 1,
             winner: 0,
             isTie: false,
+            gameOver: false
         };
         var initStateObj = gameHelpers.setInitialState();
         expect(initStateObj).toEqual(expected);
@@ -80,6 +81,7 @@ describe('httpRequest success callback', function () {
                     "board": {"board-contents": [1, 1, 0, 0, -1, 0, 0, 0, 0], "gridsize": 3},
                     "winner": 0,
                     "is-tie": false,
+                    "game-over": false,
                     "current-player": -1
                 },
                 "message": "Success"
@@ -95,6 +97,7 @@ describe('httpRequest success callback', function () {
             },
             currentPlayer: -1,
             winner: 0,
+            gameOver: false,
             isTie: false
         };
         var updatedState = gameHelpers.successCallback(success, setState);
@@ -117,7 +120,8 @@ describe('httpRequest error callback', function () {
                         "board": {"board-contents": [1, 1, 0, 0, -1, 0, 0, 0, 0], "gridsize": 3},
                         "winner": 0,
                         "is-tie": false,
-                        "current-player": -1
+                        "current-player": -1,
+                        "game-over": false
                     },
                     "message": "Failed"
                 }

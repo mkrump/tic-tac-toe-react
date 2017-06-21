@@ -1,16 +1,8 @@
-var Service = require('./service.js');
+var service = require('./service.js');
 
 var successCallback = function (success, setState) {
     var responseData = success.data['game-state'];
-    var updatedState = {
-        board: {
-            boardContents: responseData.board['board-contents'],
-            gridSize: responseData.board.gridsize
-        },
-        currentPlayer: responseData['current-player'],
-        winner: responseData.winner,
-        isTie: responseData['is-tie'],
-    };
+    var updatedState = service.translateGameStateFromAPIFormat(responseData);
     return setState(updatedState);
 };
 
@@ -49,11 +41,11 @@ var UIMarkers = function (board, playerMarkers) {
 };
 
 var humanClickHandler = function (state, setState) {
-    return humanMoveRequest(state, setState, Service.validateMoveEndpoint.validateMove)
+    return humanMoveRequest(state, setState, service.validateMoveEndpoint.validateMove)
 };
 
 var computerMoveHandler = function (state, setState) {
-    return HttpRequestToUpdateState(state, setState, Service.computerMoveEndpoint.computerMove)
+    return HttpRequestToUpdateState(state, setState, service.computerMoveEndpoint.computerMove)
 };
 
 var nullClickHandler = function (state, setState) {
@@ -85,6 +77,7 @@ var setInitialState = function () {
         currentPlayer: 1,
         winner: 0,
         isTie: false,
+        gameOver: false,
     };
 };
 
