@@ -1,5 +1,5 @@
 var axios = require('axios');
-var Service = require('../../src/components/Service');
+var Service = require('../../src/service');
 
 describe('validateMoveEndpoint', function () {
 

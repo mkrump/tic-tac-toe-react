@@ -17,13 +17,13 @@
   },
   "dependencies": {
     "axios": "^0.16.2",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
-    "uglify-js": "^3.0.15",
     "browserify": "^14.4.0",
     "express": "^4.14.0",
+    "node-lessify": "^0.1.4",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
     "reactify": "^1.1.1",
-    "node-lessify": "^0.1.4"
+    "uglify-js": "^3.0.15"
   },
   "devDependencies": {
     "@types/jasmine": "^2.5.51",
