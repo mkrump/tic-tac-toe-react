@@ -54,7 +54,7 @@ var nullClickHandler = function (state, setState) {
 }
 
 var setDefaultProps = function () {
-  var players = {'COMPUTER': -1, 'HUMAN': 1}
+  var players = {'COMPUTER': 1, 'HUMAN': -1}
 
   var playerMarkers = {}
   playerMarkers[players['HUMAN']] = 'X'
@@ -74,7 +74,7 @@ var setDefaultProps = function () {
 var setInitialState = function () {
   return {
     board: {boardContents: [0, 0, 0, 0, 0, 0, 0, 0, 0], gridSize: 3},
-    currentPlayer: 1,
+    currentPlayer: -1,
     winner: 0,
     isTie: false,
     gameOver: false

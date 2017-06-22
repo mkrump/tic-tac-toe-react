@@ -30,7 +30,7 @@ var translateGameStateFromAPIFormat = function (responseData) {
 }
 
 TicTacToeEndpoint.validateMove = function (gameState, move) {
-  return this.httpRequest({
+  return this({
     method: 'post',
     url: '/valid-move',
     data: {
@@ -41,7 +41,7 @@ TicTacToeEndpoint.validateMove = function (gameState, move) {
 }.bind(TicTacToeEndpoint)
 
 TicTacToeEndpoint.computerMove = function (gameState) {
-  return this.httpRequest({
+  return this({
     method: 'post',
     url: '/computer-move',
     data: {

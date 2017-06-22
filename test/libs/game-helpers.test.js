@@ -4,7 +4,7 @@ describe('setInitialState', function () {
   it('initializes an initial game state object', function () {
     var expected = {
       board: {boardContents: [0, 0, 0, 0, 0, 0, 0, 0, 0], gridSize: 3},
-      currentPlayer: 1,
+      currentPlayer: -1,
       winner: 0,
       isTie: false,
       gameOver: false
@@ -17,9 +17,9 @@ describe('setInitialState', function () {
 describe('setDefaultProps', function () {
   it('initializes an initial props object', function () {
     var expected = {
-      players: {'COMPUTER': -1, 'HUMAN': 1},
-      playerMarkers: {'-1': 'O', '1': 'X'},
-      playerClickHandlers: {'-1': gameHelpers.nullClickHandler, '1': gameHelpers.humanClickHandler}
+      players: {'COMPUTER': 1, 'HUMAN': -1},
+      playerMarkers: {'1': 'O', '-1': 'X'},
+      playerClickHandlers: {'1': gameHelpers.nullClickHandler, '-1': gameHelpers.humanClickHandler}
     }
     var initPropObj = gameHelpers.setDefaultProps()
     expect(initPropObj).toEqual(expected)
