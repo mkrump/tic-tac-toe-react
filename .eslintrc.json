@@ -1,0 +1,19 @@
+{
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "extends": ["eslint:recommended", "plugin:react/recommended", "standard"],
+  "plugins": [
+    "standard",
+    "promise",
+    "react"
+  ],
+  "env": {
+    "jasmine": true
+  },
+  "rules": {
+    "react/display-name": "off"
+  }
+}

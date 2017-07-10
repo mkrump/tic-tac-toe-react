@@ -12,7 +12,7 @@ var logRequest = function(request) {
   var query  = JSON.stringify(request.query);
 
   console.log('Received request: ', [method, url, params, query].join("  "));
-}
+};
 
 app.set('port', port);
 
@@ -27,6 +27,6 @@ app.get('/*', function(req, res) {
   res.sendFile(path.join(public_path, 'index.html'));
 });
 
-app.listen(app.get('port'), function() {
+app.listen(process.env.PORT || app.get('port'), function() {
   console.log('React sample dev server started on port ' + app.get('port'));
 });
